@@ -46,3 +46,5 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
     res.json({message: "Logout successful. Client should remove token from storage."})
 }
+
+module.exports = {signup, login, logout};
