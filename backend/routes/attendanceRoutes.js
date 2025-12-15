@@ -5,6 +5,6 @@ const {verifyToken, requireRole} = require('../middleware/authMiddleware');
 
 router.post('/mark', verifyToken, requireRole(['instructor', 'admin']), markAttendance);
 router.get('/workshop/:workshopId', verifyToken, requireRole(['instructor', 'admin']), getAttendanceByWorkshop);
-// TODO in a future version: restrict instructors to gettinga attendance details for their own workshops only
+// TODO in a future version: restrict instructors to getting attendance details for their own workshops only
 
 module.exports = router;
