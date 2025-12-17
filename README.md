@@ -21,15 +21,11 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 
 ## Tech Stack
 
-### Currently Using
-
 - **Backend:** Node.js, Express.js  
-- **Database:** MongoDB, **ODM:** Mongoose  
+- **Database:** MongoDB
+- **ODM:** Mongoose  
 - **Authentication:** JWT-based authentication  
 - **Testing Tools:** Postman  
-
-### Planned
-
 - **Frontend:** React, Tailwind CSS, Vite  
 
 ---
