@@ -88,6 +88,7 @@ export default function Materials() {
                         className='border p-2 mb-3 w-full'
                         value={title}
                         onChange={e => setTitle(e.target.value)}
+                        required
                     />
 
                     <input
