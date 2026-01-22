@@ -7,7 +7,7 @@ export default function Navbar() {
     return (
         <nav className='flex justify-between items-center px-6 py-4 bg-gray-800 border-b border-gray-700 shadow-lg'>
             <Link to='/' className='font-bold text-xl text-blue-400 hover:text-blue-300 transition-colors duration-200'>
-                Workshop Management System
+                WorkshopHub
             </Link>
 
             <div className='flex gap-6 items-center'>

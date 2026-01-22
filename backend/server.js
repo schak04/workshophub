@@ -20,7 +20,7 @@ const registrationRoutes = require('./routes/registrationRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
-app.get('/', (req, res) => res.send({ message: "Workshop Management System" }));
+app.get('/', (req, res) => res.send({ message: "WorkshopHub" }));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/workshops', workshopRoutes);

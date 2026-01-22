@@ -1,7 +1,6 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "backend for the workshop management system",
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js"

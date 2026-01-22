@@ -1,4 +1,4 @@
-# Workshop Management System
+# WorkshopHub
 
 <!-- markdownlint-disable MD033 -->
 <p align="left">
