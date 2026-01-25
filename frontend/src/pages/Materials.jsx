@@ -85,7 +85,7 @@ export default function Materials() {
                     <input
                         type='text'
                         placeholder="Material Title"
-                        className='border p-2 mb-3 w-full'
+                        className='input border p-2 mb-3 w-full'
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                         required
@@ -94,7 +94,7 @@ export default function Materials() {
                     <input
                         type='text'
                         placeholder="File URL"
-                        className='border p-2 mb-3 w-full'
+                        className='input border p-2 mb-3 w-full'
                         value={fileUrl}
                         onChange={e => setFileUrl(e.target.value)}
                         required

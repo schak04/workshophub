@@ -10,7 +10,7 @@ export default function Dashboard() {
             <div className='max-w-4xl mx-auto'>
                 <div className='mb-8'>
                     <h1 className='text-3xl font-bold mb-2 text-gray-100'>
-                        Welcome back, {user.name}!
+                        Welcome, {user.name}!
                     </h1>
                     <p className='text-gray-400 text-lg'>
                         Role: <span className='text-blue-400 font-semibold'>{user.role}</span>

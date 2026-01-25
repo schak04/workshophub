@@ -38,7 +38,7 @@ export default function EditWorkshop() {
                         name={key}
                         value={form[key] || ''}
                         onChange={handleChange}
-                        className='border p-2 rounded'
+                        className='input border p-2 rounded'
                     />
                 ))}
 

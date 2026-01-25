@@ -96,7 +96,7 @@ export default function Certificates() {
                     <input
                         type='text'
                         placeholder="Certificate URL"
-                        className='border p-2 mb-3 w-full'
+                        className='input border p-2 mb-3 w-full'
                         value={certificateUrl}
                         onChange={e => setCertificateUrl(e.target.value)}
                         required

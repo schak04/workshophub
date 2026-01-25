@@ -40,7 +40,7 @@ export default function CreateWorkshop() {
                         placeholder={key}
                         value={form[key]}
                         onChange={handleChange}
-                        className='border p-2 rounded'
+                        className='input border p-2 rounded'
                     />
                 ))}
 
