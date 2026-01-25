@@ -6,7 +6,7 @@ export default function Navbar() {
 
     return (
         <nav className='flex justify-between items-center px-6 py-4 bg-gray-800 border-b border-gray-700 shadow-lg'>
-            <Link to='/' className='font-bold text-xl text-blue-400 hover:text-blue-300 transition-colors duration-200'>
+            <Link to='/' className='font-bold text-2xl text-yellow-500 hover:text-blue-400 transition-colors duration-200'>
                 WorkshopHub
             </Link>
 
