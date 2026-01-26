@@ -22,7 +22,7 @@ export default function Login() {
     };
 
     return (
-        <div className='min-h-screen bg-gray-900 flex items-center justify-center p-4'>
+        <div className='min-h-screen bg-black flex items-center justify-center p-4'>
             <div className='card max-w-md w-full'>
                 <div className='text-center mb-8'>
                     <h1 className='text-3xl font-bold text-gray-100 mb-2'>Welcome</h1>
@@ -37,7 +37,7 @@ export default function Login() {
                         <input
                             type='email'
                             placeholder="Enter your email"
-                            className='input w-full'
+                            className='input'
                             value={form.email}
                             onChange={e => setForm({...form, email: e.target.value})}
                             required
@@ -51,7 +51,7 @@ export default function Login() {
                         <input
                             type='password'
                             placeholder="Enter your password"
-                            className='input w-full'
+                            className='input'
                             value={form.password}
                             onChange={e => setForm({...form, password: e.target.value})}
                             required
