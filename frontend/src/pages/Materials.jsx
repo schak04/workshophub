@@ -69,7 +69,7 @@ export default function Materials() {
                     <h2 className='font-semibold mb-4'>Add Material</h2>
 
                     <select
-                        className='border p-2 mb-3 w-full bg-gray-900'
+                        className='input'
                         value={workshop}
                         onChange={e => setWorkshop(e.target.value)}
                         required
@@ -85,7 +85,7 @@ export default function Materials() {
                     <input
                         type='text'
                         placeholder="Material Title"
-                        className='input border p-2 mb-3 w-full'
+                        className='input'
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                         required
@@ -94,13 +94,13 @@ export default function Materials() {
                     <input
                         type='text'
                         placeholder="File URL"
-                        className='input border p-2 mb-3 w-full'
+                        className='input'
                         value={fileUrl}
                         onChange={e => setFileUrl(e.target.value)}
                         required
                     />
 
-                    <button className='border px-4 py-2 rounded'>
+                    <button className='btn-secondary'>
                         Add Material
                     </button>
                 </form>
@@ -108,7 +108,7 @@ export default function Materials() {
 
             <div className='mb-4 max-w-md'>
                 <select
-                    className='border p-2 w-full bg-gray-900'
+                    className='input'
                     onChange={e => loadMaterials(e.target.value)}
                 >
                     <option value=''>All Workshops</option>
@@ -120,33 +120,33 @@ export default function Materials() {
                 </select>
             </div>
 
-            <table className='w-full border'>
+            <table className='table'>
                 <thead>
-                    <tr className='bg-amber-800'>
-                        <th className='border p-2'>Title</th>
-                        <th className='border p-2'>Workshop</th>
-                        <th className='border p-2'>Uploaded By</th>
-                        <th className='border p-2'>Action</th>
+                    <tr>
+                        <th>Title</th>
+                        <th>Workshop</th>
+                        <th>Uploaded By</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {materials.map(m => (
                         <tr key={m._id}>
-                            <td className='border p-2'>
+                            <td>
                                 {m.title || "Material"}
                             </td>
-                            <td className='border p-2'>
+                            <td>
                                 {m.workshop}
                             </td>
-                            <td className='border p-2'>
+                            <td>
                                 {m.uploaded_by?.name}
                             </td>
-                            <td className='border p-2'>
+                            <td>
                                 <a
                                     href={m.file_url}
                                     target='_blank'
                                     rel='noreferrer'
-                                    className='border px-3 py-1 rounded inline-block'
+                                    className='btn-secondary'
                                 >
                                     Open
                                 </a>

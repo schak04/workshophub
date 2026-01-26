@@ -56,13 +56,13 @@ export default function Feedback() {
     };
 
     return (
-        <div className='min-h-screen bg-gray-900 p-6'>
+        <div className='min-h-screen bg-black p-6'>
             <div className='max-w-6xl mx-auto'>
-                <h1 className='text-3xl font-bold mb-8 text-gray-100'>Feedback Management</h1>
+                <h1 className='text-3xl font-bold mb-8 text-white'>Feedback</h1>
 
                 {user?.role === 'participant' && (
                     <div className='card mb-8 max-w-lg'>
-                        <h2 className='text-xl font-semibold mb-6 text-gray-100'>Submit Workshop Feedback</h2>
+                        <h2 className='text-xl font-semibold mb-6 text-white'>Submit Workshop Feedback</h2>
 
                         <form onSubmit={submitFeedback} className='space-y-4'>
                             <div>
@@ -70,7 +70,7 @@ export default function Feedback() {
                                     Select Workshop
                                 </label>
                                 <select
-                                    className='input w-full'
+                                    className='input'
                                     value={workshop}
                                     onChange={e => setWorkshop(e.target.value)}
                                     required
@@ -89,7 +89,7 @@ export default function Feedback() {
                                     Rating (1-5 stars)
                                 </label>
                                 <select
-                                    className='input w-full'
+                                    className='input'
                                     value={rating}
                                     onChange={e => setRating(e.target.value)}
                                     required
@@ -109,7 +109,7 @@ export default function Feedback() {
                                 </label>
                                 <textarea
                                     placeholder="Share your thoughts about the workshop..."
-                                    className='input w-full h-24 resize-none'
+                                    className='input h-24 resize-none'
                                     value={comment}
                                     onChange={e => setComment(e.target.value)}
                                 />
@@ -124,11 +124,11 @@ export default function Feedback() {
 
                 {(user?.role === 'admin' || user?.role === 'instructor') && (
                     <>
-                        <div className='card mb-6'>
-                            <h2 className='text-xl font-semibold mb-4 text-gray-100'>Filter Feedback</h2>
+                        <div className='mb-6'>
+                            <h2 className='text-xl font-semibold mb-4 text-white'>Filter Feedback</h2>
                             <div className='max-w-md'>
                                 <select
-                                    className='input w-full'
+                                    className='input'
                                     onChange={e => loadFeedback(e.target.value)}
                                 >
                                     <option value=''>All Workshops</option>
@@ -141,8 +141,8 @@ export default function Feedback() {
                             </div>
                         </div>
 
-                        <div className='card'>
-                            <h2 className='text-xl font-semibold mb-6 text-gray-100'>Feedback Overview</h2>
+                        <div>
+                            <h2 className='text-xl font-semibold mb-6 text-white'>Feedback Overview</h2>
                             <div className='overflow-x-auto'>
                                 <table className='table'>
                                     <thead>
@@ -156,18 +156,18 @@ export default function Feedback() {
                                     </thead>
                                     <tbody>
                                         {feedbacks.map(f => (
-                                            <tr key={f._id} className='hover:bg-gray-700 transition-colors duration-200'>
-                                                <td className='font-medium text-gray-100'>{f.workshop?.title}</td>
-                                                <td className='text-gray-300'>{f.user?.name}</td>
+                                            <tr key={f._id}>
+                                                <td>{f.workshop?.title}</td>
+                                                <td>{f.user?.name}</td>
                                                 <td>
-                                                    <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-900 text-blue-200'>
+                                                    <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-900 text-teal-200'>
                                                         {'⭐'.repeat(f.rating)} ({f.rating})
                                                     </span>
                                                 </td>
-                                                <td className='text-gray-300 max-w-xs truncate' title={f.comment || 'No comment'}>
+                                                <td title={f.comment || 'No comment'}>
                                                     {f.comment || <span className='text-gray-500 italic'>No comment</span>}
                                                 </td>
-                                                <td className='text-gray-400 text-sm'>
+                                                <td>
                                                     {new Date(f.createdAt).toLocaleDateString()}
                                                 </td>
                                             </tr>
