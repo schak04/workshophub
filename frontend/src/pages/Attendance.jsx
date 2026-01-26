@@ -69,7 +69,7 @@ export default function Attendance() {
             <h1 className='text-2xl font-semibold mb-4'>Manage Attendance</h1>
 
             <select
-                className='border p-2 mb-6 w-full max-w-md bg-gray-900'
+                className='input border p-2 mb-6 w-full max-w-md'
                 value={selectedWorkshop}
                 onChange={e => setSelectedWorkshop(e.target.value)}
             >
@@ -90,13 +90,13 @@ export default function Attendance() {
             )}
 
             {registrations.length > 0 && (
-                <table className='w-full border'>
+                <table className='table'>
                     <thead>
-                        <tr className='bg-gray-100'>
-                            <th className='border p-2 bg-amber-800'>Name</th>
-                            <th className='border p-2 bg-amber-800'>Email</th>
-                            <th className='border p-2 bg-amber-800'>Status</th>
-                            <th className='border p-2 bg-amber-800'>Action</th>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -106,16 +106,16 @@ export default function Attendance() {
 
                             return (
                                 <tr key={reg._id}>
-                                    <td className='border p-2'>{reg.user.name}</td>
-                                    <td className='border p-2'>{reg.user.email}</td>
-                                    <td className='border p-2'>
+                                    <td>{reg.user.name}</td>
+                                    <td>{reg.user.email}</td>
+                                    <td>
                                         {attended ? "Present" : "Absent"}
                                     </td>
-                                    <td className='border p-2 text-center'>
+                                    <td>
                                         <div className='flex justify-center'>
                                             <button
                                                 className={`px-4 py-1.5 rounded-md font-medium transition-all duration-150 ease-in-out active:scale-[0.98] shadow-sm hover:shadow-md
-                                                ${attended ? 'bg-sky-400 hover:bg-sky-500 text-white' : 'bg-amber-400 hover:bg-amber-500 text-black'}`}
+                                                ${attended ? 'btn-primary' : 'btn-secondary'}`}
                                                 onClick={() => toggleAttendance(reg._id, attended)}
                                             >
                                                 Mark {attended ? "Absent" : "Present"}
