@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <footer className='bg-linear-to-r from-gray-900 via-blue-900 to-gray-800 text-center p-6 mt-8 shadow-inner rounded-t-2xl'>
+        <footer className='bg-linear-to-r from-gray-900 via-teal-900 to-gray-800 text-center p-6 mt-8 shadow-inner rounded-t-2xl'>
             <p className='text-gray-200 font-bold text-lg mb-1'>
                 Built by <span className='text-yellow-400'>Saptaparno Chakraborty</span>
             </p>

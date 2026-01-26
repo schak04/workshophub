@@ -23,104 +23,102 @@ export default function App() {
     return (
         <AuthProvider>
             <BrowserRouter>
-                <Navbar />
-
-                <Routes>
-                    <Route path='/login' element={<Login />} />
-                    <Route path='/signup' element={<Register />} />
-
-                    <Route
-                        path='/'
-                        element={
-                            <ProtectedRoute>
-                                <Dashboard />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/workshops'
-                        element={
-                            <ProtectedRoute>
-                                <Workshops />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/workshops/:id'
-                        element={
-                            <ProtectedRoute>
-                                <WorkshopDetails />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/workshops/create'
-                        element={
-                            <ProtectedRoute roles={['admin']}>
-                                <CreateWorkshop />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/workshops/edit/:id'
-                        element={
-                            <ProtectedRoute roles={['admin']}>
-                                <EditWorkshop />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/registrations'
-                        element={
-                            <ProtectedRoute>
-                                <Registrations />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/materials'
-                        element={
-                            <ProtectedRoute>
-                                <Materials />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/attendance'
-                        element={
-                            <ProtectedRoute roles={['admin', 'instructor']}>
-                                <Attendance />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/feedback'
-                        element={
-                            <ProtectedRoute>
-                                <Feedback />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    <Route
-                        path='/certificates'
-                        element={
-                            <ProtectedRoute>
-                                <Certificates />
-                            </ProtectedRoute>
-                        }
-                    />
-                </Routes>
-
-                <Footer />
+                <div className='min-h-screen flex flex-col'>
+                    <Navbar />
+                        <main className='grow'>
+                            <Routes>
+                                <Route
+                                    path='/login'
+                                    element={<Login />}
+                                />
+                                <Route
+                                    path='/signup'
+                                    element={<Register />}
+                                />
+                                <Route
+                                    path='/'
+                                    element={
+                                        <ProtectedRoute>
+                                            <Dashboard />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/workshops'
+                                    element={
+                                        <ProtectedRoute>
+                                            <Workshops />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/workshops/:id'
+                                    element={
+                                        <ProtectedRoute>
+                                            <WorkshopDetails />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/workshops/create'
+                                    element={
+                                        <ProtectedRoute roles={['admin']}>
+                                            <CreateWorkshop />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/workshops/edit/:id'
+                                    element={
+                                        <ProtectedRoute roles={['admin']}>
+                                            <EditWorkshop />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/registrations'
+                                    element={
+                                        <ProtectedRoute>
+                                            <Registrations />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/materials'
+                                    element={
+                                        <ProtectedRoute>
+                                            <Materials />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/attendance'
+                                    element={
+                                        <ProtectedRoute roles={['admin', 'instructor']}>
+                                            <Attendance />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/feedback'
+                                    element={
+                                        <ProtectedRoute>
+                                            <Feedback />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path='/certificates'
+                                    element={
+                                        <ProtectedRoute>
+                                            <Certificates />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                            </Routes>
+                        </main>
+                    <Footer />
+                </div>
             </BrowserRouter>
         </AuthProvider>
     );
