@@ -24,7 +24,7 @@
     }
 
     .input {
-        @apply bg-gray-800 border border-gray-700 text-gray-100 cursor-pointer px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200;
+        @apply bg-black border border-gray-700 text-gray-100 cursor-pointer px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200;
     }
 
     .card {
