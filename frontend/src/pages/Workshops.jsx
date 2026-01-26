@@ -21,7 +21,7 @@ export default function Workshops() {
                 {user?.role === 'admin' && (
                     <Link
                         to='/workshops/create'
-                        className='bg-black text-white px-4 py-2 rounded'
+                        className='btn-secondary px-4 py-2 rounded'
                     >
                         Create Workshop
                     </Link>
@@ -33,10 +33,10 @@ export default function Workshops() {
                     <Link
                         key={ws._id}
                         to={`/workshops/${ws._id}`}
-                        className='border p-4 rounded hover:bg-green-600'
+                        className='border p-4 rounded hover:bg-green-700 group'
                     >
                         <h2 className='text-lg font-medium'>{ws.title}</h2>
-                        <p className='text-sm text-gray-600'>{ws.venue}</p>
+                        <p className='text-sm text-gray-500 group-hover:text-black'>{ws.venue}</p>
                         <p className='text-sm'>
                             Instructor: {ws.instructor?.name || 'N/A'}
                         </p>

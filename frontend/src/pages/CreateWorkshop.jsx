@@ -40,11 +40,11 @@ export default function CreateWorkshop() {
                         placeholder={key}
                         value={form[key]}
                         onChange={handleChange}
-                        className='input border p-2 rounded'
+                        className='input'
                     />
                 ))}
 
-                <button className='bg-black text-white py-2 rounded'>
+                <button className='btn-secondary'>
                     Create
                 </button>
             </form>

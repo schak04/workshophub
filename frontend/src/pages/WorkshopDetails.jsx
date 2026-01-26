@@ -62,14 +62,14 @@ export default function WorkshopDetails() {
                 <div className='flex gap-3 mt-6'>
                     <Link
                         to={`/workshops/edit/${id}`}
-                        className='border px-4 py-2 rounded'
+                        className='btn-secondary'
                     >
                         Edit
                     </Link>
 
                     <button
                         onClick={deleteWorkshop}
-                        className='border px-4 py-2 rounded text-red-600'
+                        className='btn-danger'
                     >
                         Delete
                     </button>
@@ -87,7 +87,7 @@ export default function WorkshopDetails() {
                     </button>
 
                     {message && (
-                        <p className='mt-2 text-sm text-blue-600'>{message}</p>
+                        <p className='mt-2 text-sm text-teal-600'>{message}</p>
                     )}
                 </div>
             )}
