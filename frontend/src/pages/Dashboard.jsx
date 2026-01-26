@@ -6,21 +6,21 @@ export default function Dashboard() {
     if (!user) return null;
 
     return (
-        <div className='min-h-screen bg-gray-900 p-6'>
+        <div className='min-h-screen bg-black p-6'>
             <div className='max-w-4xl mx-auto'>
                 <div className='mb-8'>
                     <h1 className='text-3xl font-bold mb-2 text-gray-100'>
                         Welcome, {user.name}!
                     </h1>
                     <p className='text-gray-400 text-lg'>
-                        Role: <span className='text-blue-400 font-semibold'>{user.role}</span>
+                        Role: <span className='text-teal-400 font-semibold'>{user.role}</span>
                     </p>
                 </div>
 
                 <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-                    <Link className='card hover:border-blue-500 transition-all duration-300 group' to='/workshops'>
+                    <Link className='card hover:border-teal-500 transition-all duration-300 group' to='/workshops'>
                         <div className='flex items-center mb-3'>
-                            <div className='w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-500 transition-colors duration-200'>
+                            <div className='w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center mr-3 group-hover:bg-teal-500 transition-colors duration-200'>
                                 <span className='text-white font-bold'>W</span>
                             </div>
                             <h3 className='text-xl font-semibold text-gray-100'>Workshops</h3>
