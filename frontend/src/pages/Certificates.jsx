@@ -66,7 +66,7 @@ export default function Certificates() {
                     <h2 className='font-semibold mb-4'>Issue Certificate</h2>
 
                     <select
-                        className='border p-2 mb-3 w-full bg-gray-900'
+                        className='input'
                         value={workshop}
                         onChange={e => setWorkshop(e.target.value)}
                         required
@@ -80,7 +80,7 @@ export default function Certificates() {
                     </select>
 
                     <select
-                        className='border p-2 mb-3 w-full bg-gray-900'
+                        className='input'
                         value={userId}
                         onChange={e => setUserId(e.target.value)}
                         required
@@ -96,42 +96,42 @@ export default function Certificates() {
                     <input
                         type='text'
                         placeholder="Certificate URL"
-                        className='input border p-2 mb-3 w-full'
+                        className='input'
                         value={certificateUrl}
                         onChange={e => setCertificateUrl(e.target.value)}
                         required
                     />
 
-                    <button className='border px-4 py-2 rounded'>
+                    <button className='btn-secondary'>
                         Issue Certificate
                     </button>
                 </form>
             )}
 
-            <table className='w-full border'>
+            <table className='table'>
                 <thead>
-                    <tr className='bg-amber-800'>
-                        <th className='border p-2'>Workshop</th>
-                        <th className='border p-2'>User</th>
-                        <th className='border p-2'>Issued</th>
-                        <th className='border p-2'>Action</th>
+                    <tr>
+                        <th>Workshop</th>
+                        <th>User</th>
+                        <th>Issued</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {certificates.map(cert => (
                         <tr key={cert._id}>
-                            <td className='border p-2'>
+                            <td>
                                 {cert.workshop?.title}
                             </td>
-                            <td className='border p-2'>
+                            <td>
                                 {cert.user?.name}
                             </td>
-                            <td className='border p-2'>
+                            <td>
                                 {new Date(cert.issued_date).toLocaleDateString()}
                             </td>
-                            <td className='border p-2'>
+                            <td>
                                 <button
-                                    className='border px-3 py-1 rounded'
+                                    className='btn-secondary'
                                     onClick={() => downloadCertificate(cert._id)}
                                 >
                                     Download
