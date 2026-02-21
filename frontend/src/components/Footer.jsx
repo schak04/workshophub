@@ -1,13 +1,14 @@
 export default function Footer() {
     return (
-        <footer className='bg-linear-to-r from-gray-900 via-teal-900 to-gray-800 text-center p-6 mt-8 shadow-inner rounded-t-2xl'>
-            <p className='text-gray-200 font-bold text-lg mb-1'>
-                Built by <span className='text-yellow-400'>Saptaparno Chakraborty</span>
-            </p>
-            <p className='text-sm tracking-wide'>
-                First MERN Learning Project • 2025
-            </p>
-            <div className='mt-3 h-1 w-24 mx-auto bg-yellow-400 rounded-full shadow-md'></div>
+        <footer className="border-t border-slate-200 bg-white py-6 dark:border-slate-800 dark:bg-slate-950">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Built by <span className="font-medium text-slate-900 dark:text-slate-100">Saptaparno Chakraborty</span>
+                </p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-500">
+                    MERN Learning Project • 2025
+                </p>
+            </div>
         </footer>
     );
 }
