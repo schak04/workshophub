@@ -27,8 +27,15 @@ function AppLayout() {
         <div className='min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100'>
             {!isAuthPage && <Navbar />}
 
-            <div className={isAuthPage ? 'min-h-screen flex items-center justify-center px-4' : ''}>
-                <main className={isAuthPage ? 'w-full max-w-md' : 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6'}>
+            <main
+                className={[
+                    'w-full',
+                    isAuthPage
+                        ? 'min-h-screen flex items-center justify-center px-4'
+                        : 'md:pl-64',
+                ].join(' ')}
+            >
+                <div className={isAuthPage ? 'w-full max-w-md' : 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6'}>
                     <Routes>
                         <Route path='/login' element={<Login />} />
                         <Route path='/signup' element={<Register />} />
@@ -114,10 +121,10 @@ function AppLayout() {
                             }
                         />
                     </Routes>
-                </main>
-            </div>
+                </div>
 
-            {!isAuthPage && <Footer />}
+                {!isAuthPage && <Footer />}
+            </main>
         </div>
     );
 }
