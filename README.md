@@ -30,6 +30,7 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 - **Password Hashing:** Bcrypt (for secure password storage)  
 - **Testing Tools:** Postman  
 - **Frontend:** React, Tailwind CSS, Vite
+- **Icons:** `lucide-react`
 
 ---
 
