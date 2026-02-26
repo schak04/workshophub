@@ -50,7 +50,7 @@ export default function Dashboard() {
         { title: 'Total Workshops', value: '24', sub: '+3 this month' },
         { title: 'Active Participants', value: '482', sub: '+12% from last month' },
         { title: 'Certificates Issued', value: '156', sub: '+8 this week' },
-        { title: 'Avg. Attendance', value: '87%', sub: '+2.5% improvement' },
+        { title: 'Average Attendance', value: '87%', sub: '+2.5% improvement' },
     ];
 
     const recentWorkshops = [
