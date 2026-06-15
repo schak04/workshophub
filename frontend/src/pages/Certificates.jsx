@@ -12,7 +12,6 @@ export default function Certificates() {
 
     const [workshop, setWorkshop] = useState('');
     const [userId, setUserId] = useState('');
-    const [certificateUrl, setCertificateUrl] = useState('');
 
     useEffect(() => {
         api.get('/certificates')
@@ -31,8 +30,7 @@ export default function Certificates() {
         try {
             await api.post('/certificates', {
                 workshop,
-                userId,
-                certificate_url: certificateUrl
+                userId
             });
 
             const res = await api.get('/certificates');
@@ -40,7 +38,6 @@ export default function Certificates() {
 
             setWorkshop('');
             setUserId('');
-            setCertificateUrl('');
         } catch (err) {
             console.error(err);
             alert("Error issuing certificate");
@@ -111,19 +108,6 @@ export default function Certificates() {
                                     </option>
                                 ))}
                             </select>
-                        </div>
-
-                        <div className='sm:col-span-2'>
-                            <label className='block text-sm font-medium text-slate-700 dark:text-slate-200'>
-                                Certificate URL
-                            </label>
-                            <input
-                                type='text'
-                                value={certificateUrl}
-                                onChange={e => setCertificateUrl(e.target.value)}
-                                className='mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500'
-                                required
-                            />
                         </div>
 
                         <div className='sm:col-span-2'>
