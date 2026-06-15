@@ -1,10 +1,11 @@
 const Certificate = require('../models/Certificate');
+const PDFDocument = require('pdfkit');
 
 const issueCertificate = async (req, res) => {
     try {
-        const {workshop, userId, certificate_url} = req.body;
-        if (!workshop || !userId || !certificate_url) return res.status(400).json({message: "Workshop, user ID, and certificate URL are required"});
-        const cert = await Certificate.create({workshop, user: userId, certificate_url});
+        const {workshop, userId} = req.body;
+        if (!workshop || !userId) return res.status(400).json({message: "Workshop and user ID are BOTH required!!"});
+        const cert = await Certificate.create({workshop, user: userId});
         res.status(201).json(cert);
     }
     catch (err) {
