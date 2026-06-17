@@ -24,12 +24,18 @@ const connectDB = async () => {
     }
 };
 
-const seedUsers = async () => {
+const seed = async () => {
     await connectDB();
 
     try {
         await User.deleteMany({});
-        console.log('Existing users cleared');
+        await Workshop.deleteMany({});
+        await Registration.deleteMany({});
+        await Attendance.deleteMany({});
+        await Material.deleteMany({});
+        await Feedback.deleteMany({});
+        await Certificate.deleteMany({});
+        console.log('Cleared existing data');
 
         const defaultPassword = 'password123';
         const hashedPassword = await bcrypt.hash(defaultPassword, 10);
@@ -138,4 +144,4 @@ const seedUsers = async () => {
     }
 };
 
-seedUsers();
+seed();
