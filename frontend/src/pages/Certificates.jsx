@@ -44,11 +44,23 @@ export default function Certificates() {
         }
     };
 
-    const downloadCertificate = (id) => {
-        window.open(
-            `http://localhost:8000/api/certificates/download/${id}`,
-            '_blank'
-        );
+    const downloadCertificate = async (id, userName, workshopTitle) => {
+        try {
+            const response = await api.get(`/certificates/download/${id}`, {
+                responseType: 'blob'
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Certificate_${userName.replace(/\s+/g, '_')}_${workshopTitle.replace(/\s+/g, '_')}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (err) {
+            console.error(err);
+            alert("Error downloading certificate");
+        }
     };
 
     return (
@@ -153,7 +165,7 @@ export default function Certificates() {
                                 </td>
                                 <td className='px-6 py-4 text-right'>
                                     <button
-                                        onClick={() => downloadCertificate(cert._id)}
+                                        onClick={() => downloadCertificate(cert._id, cert.user?.name || 'User', cert.workshop?.title || 'Workshop')}
                                         className='inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
                                     >
                                         <Download className='h-4 w-4' />

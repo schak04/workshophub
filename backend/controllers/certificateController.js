@@ -45,11 +45,75 @@ const downloadCertificate = async (req, res) => {
         if (req.user.role === 'participant' && cert.user._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: "Forbidden: You CANNOT download someone else's certificate" });
         }
-        
-        if (!cert.certificate_url) {
-            return res.status(500).json({ message: "Certificate unavailable" });
-        }
-        res.redirect(cert.certificate_url);
+
+        /*
+        ---- Certificate PDF ----
+        for future ref: https://pdfkit.org/docs/getting_started.html
+        */
+
+        const adminUser = await User.findOne({ role: 'admin' });
+        const adminName = adminUser ? adminUser.name : 'Administrator';
+        const instructorName = cert.workshop.instructor?.name || 'Instructor';
+
+        const doc = new PDFDocument({
+            layout: 'landscape',
+            size: 'A4',
+            margin: 50
+        });
+
+        const filename = `Certificate_${cert.user.name.replace(/\s+/g, '_')}_${cert.workshop.title.replace(/\s+/g, '_')}.pdf`;
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+        doc.pipe(res);
+
+        const W = doc.page.width;
+        const H = doc.page.height;
+
+        doc.rect(20, 20, W - 40, H - 40).stroke('#1e293b');
+        doc.rect(25, 25, W - 50, H - 50).stroke('#64748b');
+
+        doc.moveDown(4);
+        doc.font('Helvetica-Bold').fontSize(13).fillColor('#0d9488').text('WorkshopHub', { align: 'center' });
+        doc.moveDown(0.4);
+        doc.font('Helvetica-Bold').fontSize(34).fillColor('#0f172a').text('CERTIFICATE', { align: 'center' });
+        doc.font('Helvetica').fontSize(16).fillColor('#475569').text('OF COMPLETION', { align: 'center' });
+
+        doc.moveDown(2);
+        doc.font('Helvetica').fontSize(13).fillColor('#475569').text('This is to certify that', { align: 'center' });
+
+        doc.moveDown(0.4);
+        doc.font('Helvetica-Bold').fontSize(26).fillColor('#0d9488').text(cert.user.name.toUpperCase(), { align: 'center' });
+
+        doc.moveDown(0.4);
+        doc.font('Helvetica').fontSize(13).fillColor('#475569').text('has successfully completed the workshop', { align: 'center' });
+
+        doc.moveDown(0.4);
+        doc.font('Helvetica-Bold').fontSize(18).fillColor('#0f172a').text(cert.workshop.title, { align: 'center' });
+
+        doc.moveDown(1.2);
+        const date = new Date(cert.issued_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        doc.font('Helvetica').fontSize(11).fillColor('#475569').text(`Issued on ${date}`, { align: 'center' });
+
+        const sigY = H - 110;
+        const colWidth = 180;
+        const leftX = W / 4 - colWidth / 2;
+        const rightX = (3 * W) / 4 - colWidth / 2;
+
+        const drawSignatory = (x, y, name, title) => {
+            doc.font('Helvetica-Bold').fontSize(11).fillColor('#0f172a').text(name, x, y, { width: colWidth, align: 'center' });
+            doc.font('Helvetica').fontSize(9).fillColor('#64748b').text(title, x, y + 16, { width: colWidth, align: 'center' });
+        };
+
+        drawSignatory(leftX, sigY, instructorName, 'Instructor');
+        drawSignatory(rightX, sigY, adminName, 'Administrator');
+
+        doc.end();
     }
     catch (err) {
         console.error(err);
