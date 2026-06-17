@@ -1,4 +1,5 @@
 const Certificate = require('../models/Certificate');
+const User = require('../models/User');
 const PDFDocument = require('pdfkit');
 
 const issueCertificate = async (req, res) => {
@@ -31,10 +32,17 @@ const listCertificates = async (req, res) => {
 const downloadCertificate = async (req, res) => {
     try {
         const {certificateId} = req.params;
-        const cert = await Certificate.findById(certificateId).select('user certificate_url');
+        const cert = await Certificate.findById(certificateId)
+            .populate('user', 'name')
+            .populate({
+                path: 'workshop',
+                select: 'title date instructor',
+                populate: { path: 'instructor', select: 'name' }
+            });
+
         if (!cert) return res.status(404).json({message: "Error 404: Certificate not found"});
 
-        if (req.user.role === 'participant' && cert.user.toString() !== req.user._id.toString()) {
+        if (req.user.role === 'participant' && cert.user._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: "Forbidden: You CANNOT download someone else's certificate" });
         }
         
