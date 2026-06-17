@@ -3,6 +3,12 @@ const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const User = require('../models/User');
+const Workshop = require('../models/Workshop');
+const Registration = require('../models/Registration');
+const Attendance = require('../models/Attendance');
+const Material = require('../models/Material');
+const Feedback = require('../models/Feedback');
+const Certificate = require('../models/Certificate');
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
