@@ -19,7 +19,7 @@ export default function Navbar() {
     const location = useLocation();
     const [darkMode, setDarkMode] = useState(() => {
         try {
-            return document.documentElement.classList.contains('dark');
+            return localStorage.getItem('wh_theme') === 'dark';
         } catch {
             return false;
         }
@@ -31,16 +31,6 @@ export default function Navbar() {
             localStorage.setItem('wh_theme', darkMode ? 'dark' : 'light');
         } catch { }
     }, [darkMode]);
-
-    useEffect(() => {
-        try {
-            const saved = localStorage.getItem('wh_theme');
-            if (saved === 'dark') setDarkMode(true);
-            if (saved === 'light') setDarkMode(false);
-        } catch(err) {
-            console.error(err.message);
-        }
-    }, []);
 
     const navItems = useMemo(() => {
         if (!user) return [];
