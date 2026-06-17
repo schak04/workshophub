@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import {
     CalendarDays,
     Users,
@@ -44,6 +46,41 @@ function StatusPill({ status }) {
 
 export default function Dashboard() {
     const { user } = useAuth();
+    const [recentWorkshops, setRecentWorkshops] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.get('/workshops')
+            .then(res => {
+                const sorted = res.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                const formatted = sorted.slice(0, 4).map(ws => ({
+                    title: ws.title,
+                    instructor: ws.instructor?.name || 'N/A',
+                    date: ws.date ? new Date(ws.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
+                    time: ws.time || '',
+                    location: ws.venue || '',
+                    status: (() => {
+                        if (!ws.date) return 'Upcoming';
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const eventDate = new Date(ws.date);
+                        eventDate.setHours(0, 0, 0, 0);
+                        if (eventDate < today) return 'Completed';
+                        if (eventDate.getTime() === today.getTime()) return 'In Progress';
+                        return 'Upcoming';
+                    })(),
+                    current: ws.current || 0,
+                    total: ws.seats || 0
+                }));
+                setRecentWorkshops(formatted);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+            });
+    }, []);
+
     if (!user) return null;
 
     const stats = [
@@ -51,49 +88,6 @@ export default function Dashboard() {
         { title: 'Active Participants', value: '482', sub: '+12% from last month' },
         { title: 'Certificates Issued', value: '156', sub: '+8 this week' },
         { title: 'Average Attendance', value: '87%', sub: '+2.5% improvement' },
-    ];
-
-    const recentWorkshops = [
-        {
-            title: 'The Linux Kernel',
-            instructor: 'Linus Torvalds',
-            date: 'Feb 25, 2026',
-            time: '2:00 PM - 5:00 PM',
-            location: 'Room A-301',
-            status: 'Upcoming',
-            current: 28,
-            total: 30,
-        },
-        {
-            title: 'Introduction to Machine Learning',
-            instructor: 'Solaire of Astora',
-            date: 'Feb 22, 2026',
-            time: '10:00 AM - 1:00 PM',
-            location: 'Lab B-105',
-            status: 'In Progress',
-            current: 45,
-            total: 50,
-        },
-        {
-            title: 'UI/UX Design Fundamentals',
-            instructor: 'Hornet',
-            date: 'Feb 20, 2026',
-            time: '1:00 PM - 4:00 PM',
-            location: 'Design Studio',
-            status: 'Completed',
-            current: 22,
-            total: 25,
-        },
-        {
-            title: 'Cloud Architecture Workshop',
-            instructor: 'Panam Palmer',
-            date: 'Feb 27, 2026',
-            time: '9:00 AM - 12:00 PM',
-            location: 'Virtual',
-            status: 'Upcoming',
-            current: 35,
-            total: 40,
-        },
     ];
 
     const icons = [
@@ -127,48 +121,58 @@ export default function Dashboard() {
                 </div>
 
                 <div className="divide-y divide-slate-200 dark:divide-slate-800">
-                    {recentWorkshops.map((w) => {
-                        const pct = Math.round((w.current / w.total) * 100);
-                        return (
-                            <div key={w.title} className="px-5 py-5">
-                                <div className="flex items-start justify-between gap-6">
-                                    <div className="min-w-0">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{w.title}</p>
-                                            <StatusPill status={w.status} />
+                    {loading ? (
+                        <div className="px-5 py-5 text-center text-sm text-slate-500 dark:text-slate-400">
+                            Loading workshops...
+                        </div>
+                    ) : recentWorkshops.length === 0 ? (
+                        <div className="px-5 py-5 text-center text-sm text-slate-500 dark:text-slate-400">
+                            No workshops found.
+                        </div>
+                    ) : (
+                        recentWorkshops.map((w) => {
+                            const pct = Math.round((w.current / w.total) * 100);
+                            return (
+                                <div key={w.title} className="px-5 py-5">
+                                    <div className="flex items-start justify-between gap-6">
+                                        <div className="min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{w.title}</p>
+                                                <StatusPill status={w.status} />
+                                            </div>
+
+                                            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{w.instructor}</p>
+
+                                            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                                                <span className="inline-flex items-center gap-1">
+                                                    <CalendarDays className="h-4 w-4" />
+                                                    {w.date}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1">
+                                                    <Clock className="h-4 w-4" />
+                                                    {w.time}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1">
+                                                    <MapPin className="h-4 w-4" />
+                                                    {w.location}
+                                                </span>
+                                            </div>
                                         </div>
 
-                                        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{w.instructor}</p>
-
-                                        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-                                            <span className="inline-flex items-center gap-1">
-                                                <CalendarDays className="h-4 w-4" />
-                                                {w.date}
-                                            </span>
-                                            <span className="inline-flex items-center gap-1">
-                                                <Clock className="h-4 w-4" />
-                                                {w.time}
-                                            </span>
-                                            <span className="inline-flex items-center gap-1">
-                                                <MapPin className="h-4 w-4" />
-                                                {w.location}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="shrink-0 text-right">
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                            {w.current}/{w.total}
-                                        </p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">participants</p>
-                                        <div className="mt-2 h-1.5 w-28 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-                                            <div className="h-full w-full origin-left scale-x-0 rounded-full bg-teal-500 dark:bg-teal-400" style={{ transform: `scaleX(${pct / 100})` }} />
+                                        <div className="shrink-0 text-right">
+                                            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                                                {w.current}/{w.total}
+                                            </p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">participants</p>
+                                            <div className="mt-2 h-1.5 w-28 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                                                <div className="h-full w-full origin-left scale-x-0 rounded-full bg-teal-500 dark:bg-teal-400" style={{ transform: `scaleX(${pct / 100})` }} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })
+                    )}
                 </div>
             </div>
         </div>

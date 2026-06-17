@@ -67,7 +67,13 @@ const getMyWorkshops = async (req, res) => {
 const getWorkshops = async (req, res) => {
     try {
         const workshops = await Workshop.find().populate('instructor', 'name email role');
-        res.json(workshops);
+        const workshopsWithCount = await Promise.all(workshops.map(async (ws) => {
+            const count = await Registration.countDocuments({ workshop: ws._id });
+            const obj = ws.toObject();
+            obj.current = count;
+            return obj;
+        }));
+        res.json(workshopsWithCount);
     }
     catch (err) {
         console.error(err);
