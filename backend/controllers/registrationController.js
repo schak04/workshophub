@@ -5,7 +5,7 @@ const registerForWorkshop = async (req, res) => {
         const {workshopId} = req.body;
         if (!workshopId) return res.status(400).json({message:"Please provide the workshop ID as it is required"});
 
-        const alreadyRegistered = await Registration.findOne({workshop: workshopId, user: req.user._id});
+        const alreadyRegistered = await Registration.findOne({workshop: workshopId, user: req.user._id, status: 'registered'});
         if (alreadyRegistered) return res.status(400).json({message: "You've already registered for this workshop"});
 
         const reg = await Registration.create({workshop: workshopId, user: req.user._id});
