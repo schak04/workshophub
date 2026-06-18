@@ -19,11 +19,15 @@ const addFeedback = async (req, res) => {
 const listFeedback = async (req, res) => {
     try {
         const filter = {};
-        if (req.query.workshop && req.query.workshop !== '') filter.workshop = req.query.workshop;
-        if (req.user.role === 'instructor') {
+        if (req.user.role === 'participant') {
+            filter.user = req.user._id;
+        } else if (req.user.role === 'instructor') {
             const myWorkshops = await Workshop.find({instructor: req.user._id}).select('_id');
             const myWorkshopIds = myWorkshops.map(w => w._id);
             filter.workshop = { $in: myWorkshopIds };
+            if (req.query.workshop && req.query.workshop !== '') filter.workshop = req.query.workshop;
+        } else {
+            if (req.query.workshop && req.query.workshop !== '') filter.workshop = req.query.workshop;
         }
         const f = await Feedback.find(filter).populate('user', 'name email').populate('workshop', 'title instructor');
         res.json(f);

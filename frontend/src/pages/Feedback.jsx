@@ -39,7 +39,7 @@ export default function Feedback() {
     };
 
     useEffect(() => {
-        if (user?.role === 'admin' || user?.role === 'instructor') {
+        if (user?.role === 'admin' || user?.role === 'instructor' || user?.role === 'participant') {
             loadFeedback();
         }
     }, [user]);
@@ -56,6 +56,7 @@ export default function Feedback() {
             setWorkshop('');
             setRating('');
             setComment('');
+            await loadFeedback();
         } catch (err) {
             console.error(err);
             alert("Error submitting feedback");
@@ -151,6 +152,48 @@ export default function Feedback() {
                             </button>
                         </div>
                     </form>
+                </div>
+            )}
+
+            {user?.role === 'participant' && feedbacks.length > 0 && (
+                <div className='max-w-2xl space-y-4'>
+                    <h2 className='text-sm font-semibold text-slate-900 dark:text-slate-100'>
+                        Your Submissions
+                    </h2>
+                    <div className='overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'>
+                        <table className='min-w-full text-sm'>
+                            <thead className='bg-slate-50 dark:bg-slate-950'>
+                                <tr className='text-left text-slate-600 dark:text-slate-300'>
+                                    <th className='px-6 py-4 font-medium'>Workshop</th>
+                                    <th className='px-6 py-4 font-medium'>Rating</th>
+                                    <th className='px-6 py-4 font-medium'>Comment</th>
+                                    <th className='px-6 py-4 font-medium'>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody className='divide-y divide-slate-200 dark:divide-slate-800'>
+                                {feedbacks.map(f => (
+                                    <tr key={f._id} className='hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors'>
+                                        <td className='px-6 py-4 font-medium text-slate-900 dark:text-slate-100'>
+                                            {f.workshop?.title || 'Untitled workshop'}
+                                        </td>
+                                        <td className='px-6 py-4'>
+                                            <RatingPill rating={f.rating} />
+                                        </td>
+                                        <td className='px-6 py-4 text-slate-600 dark:text-slate-400'>
+                                            {f.comment ? (
+                                                <span className='line-clamp-2'>{f.comment}</span>
+                                            ) : (
+                                                <span className='italic text-slate-400 dark:text-slate-500'>No comment</span>
+                                            )}
+                                        </td>
+                                        <td className='px-6 py-4 text-slate-600 dark:text-slate-400'>
+                                            {f.createdAt ? new Date(f.createdAt).toLocaleDateString() : '-'}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
 
