@@ -1,11 +1,20 @@
 const Certificate = require('../models/Certificate');
 const User = require('../models/User');
+const Registration = require('../models/Registration');
 const PDFDocument = require('pdfkit');
 
 const issueCertificate = async (req, res) => {
     try {
         const {workshop, userId} = req.body;
         if (!workshop || !userId) return res.status(400).json({message: "Workshop and user ID are BOTH required!!"});
+
+        const targetUser = await User.findById(userId).select('role');
+        if (!targetUser) return res.status(404).json({message: "User not found"});
+        if (targetUser.role !== 'participant') return res.status(400).json({message: "Certificates can only be issued to participants"});
+
+        const isRegistered = await Registration.findOne({workshop, user: userId, status: 'registered'});
+        if (!isRegistered) return res.status(400).json({message: "User is not registered for this workshop"});
+
         const cert = await Certificate.create({workshop, user: userId});
         res.status(201).json(cert);
     }
@@ -18,8 +27,12 @@ const issueCertificate = async (req, res) => {
 const listCertificates = async (req, res) => {
     try {
         const filter = {};
-        if (req.query.user) filter.user = req.query.user;
-        if (req.query.workshop) filter.workshop = req.query.workshop;
+        if (req.user.role === 'participant') {
+            filter.user = req.user._id;
+        } else {
+            if (req.query.user) filter.user = req.query.user;
+            if (req.query.workshop) filter.workshop = req.query.workshop;
+        }
         const certs = await Certificate.find(filter).populate('user', 'name email').populate('workshop', 'title date');
         res.json(certs);
     }
