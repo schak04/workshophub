@@ -1,4 +1,5 @@
 const Material = require('../models/Material');
+const Registration = require('../models/Registration');
 
 const addMaterial = async (req, res) => {
     try {
@@ -17,7 +18,13 @@ const addMaterial = async (req, res) => {
 const listMaterials = async (req, res) => {
     try {
         const filter = {};
-        if (req.query.workshop) filter.workshop = req.query.workshop;
+        if (req.user.role === 'participant') {
+            const registrations = await Registration.find({user: req.user._id, status: 'registered'}).select('workshop');
+            const workshopIds = registrations.map(r => r.workshop);
+            filter.workshop = {$in: workshopIds};
+        } else {
+            if (req.query.workshop) filter.workshop = req.query.workshop;
+        }
         const materials = await Material.find(filter).populate('uploaded_by', 'name email');
         res.json(materials);
     }
