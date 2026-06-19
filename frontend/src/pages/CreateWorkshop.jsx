@@ -27,13 +27,20 @@ export default function CreateWorkshop() {
         instructor: ''
     });
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const handleChange = e =>
         setForm({ ...form, [e.target.name]: e.target.value });
 
     const submit = async e => {
         e.preventDefault();
-        await api.post('/workshops', form);
-        navigate('/workshops');
+        setErrorMsg('');
+        try {
+            await api.post('/workshops', form);
+            navigate('/workshops');
+        } catch (err) {
+            setErrorMsg(err.response?.data?.message || 'Error creating workshop');
+        }
     };
 
     const fields = [
@@ -76,6 +83,12 @@ export default function CreateWorkshop() {
                     Create
                 </button>
             </div>
+
+            {errorMsg && (
+                <div className='rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400'>
+                    {errorMsg}
+                </div>
+            )}
 
             <div className='rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900'>
                 <form id='create-workshop' onSubmit={submit} className='grid gap-5 sm:grid-cols-2'>

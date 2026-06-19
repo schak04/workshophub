@@ -31,13 +31,20 @@ export default function EditWorkshop() {
 
     if (!form) return null;
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const handleChange = e =>
         setForm({ ...form, [e.target.name]: e.target.value });
 
     const submit = async e => {
         e.preventDefault();
-        await api.put(`/workshops/${id}`, form);
-        navigate(`/workshops/${id}`);
+        setErrorMsg('');
+        try {
+            await api.put(`/workshops/${id}`, form);
+            navigate(`/workshops/${id}`);
+        } catch (err) {
+            setErrorMsg(err.response?.data?.message || 'Error updating workshop');
+        }
     };
 
     const fields = [
@@ -47,7 +54,8 @@ export default function EditWorkshop() {
         { key: 'endDate', label: 'End Date', type: 'date' },
         { key: 'time', label: 'Time', type: 'text' },
         { key: 'venue', label: 'Venue', type: 'text' },
-        { key: 'seats', label: 'Seats', type: 'number' }
+        { key: 'seats', label: 'Seats', type: 'number' },
+        { key: 'instructor', label: 'Instructor', type: 'text' }
     ];
 
     return (
@@ -78,6 +86,12 @@ export default function EditWorkshop() {
                     Update
                 </button>
             </div>
+
+            {errorMsg && (
+                <div className='rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400'>
+                    {errorMsg}
+                </div>
+            )}
 
             <div className='rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900'>
                 <form

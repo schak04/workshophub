@@ -1,9 +1,32 @@
 const Workshop = require('../models/Workshop');
 const Registration = require('../models/Registration');
 
+const checkOverlap = async (instructorId, startDateStr, endDateStr, excludeWorkshopId = null) => {
+    if (!instructorId || !startDateStr || !endDateStr) return null;
+
+    const query = {
+        instructor: instructorId,
+        startDate: { $lte: new Date(endDateStr) },
+        endDate: { $gte: new Date(startDateStr) }
+    };
+
+    if (excludeWorkshopId) {
+        query._id = { $ne: excludeWorkshopId };
+    }
+    
+    return await Workshop.findOne(query);
+};
+
 const createWorkshop = async (req, res) => {
     try {
         const data = req.body;
+        if (new Date(data.endDate) < new Date(data.startDate)) {
+            return res.status(400).json({ message: "End date cannot be earlier than start date." });
+        }
+        const overlapping = await checkOverlap(data.instructor, data.startDate, data.endDate);
+        if (overlapping) {
+            return res.status(400).json({ message: `Instructor is already assigned to another workshop (${overlapping.title}) during these dates.` });
+        }
         const workshop = await Workshop.create(data);
         res.status(201).json(workshop);
     }
@@ -15,7 +38,16 @@ const createWorkshop = async (req, res) => {
 
 const updateWorkshop = async (req, res) => {
     try {
-        const updated = await Workshop.findByIdAndUpdate(req.params.id, req.body, {new:true});
+        const data = req.body;
+        if (new Date(data.endDate) < new Date(data.startDate)) {
+            return res.status(400).json({ message: "End date cannot be earlier than start date." });
+        }
+        const overlapping = await checkOverlap(data.instructor, data.startDate, data.endDate, req.params.id);
+        if (overlapping) {
+            return res.status(400).json({ message: `Instructor is already assigned to another workshop (${overlapping.title}) during these dates.` });
+        }
+
+        const updated = await Workshop.findByIdAndUpdate(req.params.id, data, {new:true});
         if (!updated) return res.status(404).json({message: "Error 404: Workshop NOT found"});
         res.json(updated);
     }
