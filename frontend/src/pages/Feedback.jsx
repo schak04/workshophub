@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import api from '../api/axios';
 import {useAuth} from '../context/AuthContext';
 import {MessageSquare, Send, Filter} from 'lucide-react';
+import toast from 'react-hot-toast';
 
 function RatingPill({ rating }) {
     return (
@@ -20,11 +21,13 @@ export default function Feedback() {
     const [workshop, setWorkshop] = useState('');
     const [rating, setRating] = useState('');
     const [comment, setComment] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         api.get('/workshops')
             .then(res => setWorkshops(res.data))
-            .catch(err => console.error(err));
+            .catch(err => toast.error("Failed to load workshops"));
     }, []);
 
     const loadFeedback = async (workshopId = '') => {
@@ -34,7 +37,7 @@ export default function Feedback() {
             );
             setFeedbacks(res.data);
         } catch (err) {
-            console.error(err);
+            toast.error("Failed to load feedback");
         }
     };
 
@@ -46,6 +49,8 @@ export default function Feedback() {
 
     const submitFeedback = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
+        setSubmitting(true);
         try {
             await api.post('/feedback', {
                 workshop,
@@ -57,9 +62,11 @@ export default function Feedback() {
             setRating('');
             setComment('');
             await loadFeedback();
+            toast.success("Feedback submitted successfully!");
         } catch (err) {
-            console.error(err);
-            alert("Error submitting feedback");
+            setErrorMsg(err.response?.data?.message || "Error submitting feedback");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -89,6 +96,12 @@ export default function Feedback() {
                             Submit Workshop Feedback
                         </h2>
                     </div>
+
+                    {errorMsg && (
+                        <div className='mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400'>
+                            {errorMsg}
+                        </div>
+                    )}
 
                     <form onSubmit={submitFeedback} className='grid gap-5 sm:grid-cols-2'>
                         <div className='sm:col-span-2'>
@@ -145,10 +158,11 @@ export default function Feedback() {
                         <div className='sm:col-span-2'>
                             <button
                                 type='submit'
-                                className='inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
+                                disabled={submitting}
+                                className='inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
                             >
                                 <Send className='h-4 w-4' />
-                                Submit Feedback
+                                {submitting ? "Submitting..." : "Submit Feedback"}
                             </button>
                         </div>
                     </form>

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function EditWorkshop() {
     const { id } = useParams();
@@ -26,7 +27,9 @@ export default function EditWorkshop() {
                 ws.endDate = ws.endDate ? ws.endDate.split('T')[0] : '';
                 setForm(ws);
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                toast.error("Failed to load workshop data");
+            });
     }, [id]);
 
     if (!form) return null;
@@ -41,6 +44,7 @@ export default function EditWorkshop() {
         setErrorMsg('');
         try {
             await api.put(`/workshops/${id}`, form);
+            toast.success("Workshop updated successfully!");
             navigate(`/workshops/${id}`);
         } catch (err) {
             setErrorMsg(err.response?.data?.message || 'Error updating workshop');

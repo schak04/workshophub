@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { CalendarDays, Clock, MapPin, Users } from 'lucide-react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function WorkshopDetails() {
     const { id } = useParams();
@@ -10,12 +11,12 @@ export default function WorkshopDetails() {
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [registering, setRegistering] = useState(false);
-    const [message, setMessage] = useState('');
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         api.get(`/workshops/${id}`)
             .then(res => setData(res.data))
-            .catch(err => console.error(err));
+            .catch(err => toast.error("Failed to load workshop details"));
     }, [id]);
 
     if (!data) return null;
@@ -24,25 +25,27 @@ export default function WorkshopDetails() {
 
     const deleteWorkshop = async () => {
         if (!window.confirm('Delete this workshop?')) return;
-        await api.delete(`/workshops/${id}`);
-        navigate('/workshops');
+        setDeleting(true);
+        try {
+            await api.delete(`/workshops/${id}`);
+            toast.success("Workshop deleted successfully");
+            navigate('/workshops');
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Failed to delete workshop");
+        } finally {
+            setDeleting(false);
+        }
     };
 
     const handleRegister = async () => {
         try {
             setRegistering(true);
-            setMessage('');
-
             await api.post('/registrations', {
                 workshopId: id,
             });
-
-            setMessage("Successfully registered for this workshop!");
+            toast.success("Successfully registered for this workshop!");
         } catch (err) {
-            console.error(err);
-            setMessage(
-                err.response?.data?.message || "Registration failed"
-            );
+            toast.error(err.response?.data?.message || "Registration failed");
         } finally {
             setRegistering(false);
         }
@@ -118,9 +121,10 @@ export default function WorkshopDetails() {
 
                         <button
                             onClick={deleteWorkshop}
-                            className='rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-900 transition-colors'
+                            disabled={deleting}
+                            className='rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 dark:bg-red-800 dark:hover:bg-red-900 transition-colors'
                         >
-                            Delete
+                            {deleting ? "Deleting..." : "Delete"}
                         </button>
                     </div>
                 )}
@@ -134,12 +138,6 @@ export default function WorkshopDetails() {
                         >
                             {registering ? "Registering..." : "Register for Workshop"}
                         </button>
-
-                        {message && (
-                            <p className='mt-3 text-sm text-teal-600 dark:text-teal-400'>
-                                {message}
-                            </p>
-                        )}
                     </div>
                 )}
             </div>

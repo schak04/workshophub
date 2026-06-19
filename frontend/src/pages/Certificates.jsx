@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import api from '../api/axios';
 import {useAuth} from '../context/AuthContext';
 import {Award, Download, Plus} from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Certificates() {
     const {user} = useAuth();
@@ -12,6 +13,9 @@ export default function Certificates() {
 
     const [workshop, setWorkshop] = useState('');
     const [userId, setUserId] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+    const [issuing, setIssuing] = useState(false);
+    const [downloading, setDownloading] = useState(null);
 
     useEffect(() => {
         api.get('/certificates')
@@ -27,6 +31,8 @@ export default function Certificates() {
 
     const issueCertificate = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
+        setIssuing(true);
         try {
             await api.post('/certificates', {
                 workshop,
@@ -38,14 +44,17 @@ export default function Certificates() {
 
             setWorkshop('');
             setUserId('');
+            toast.success("Certificate issued successfully!");
         } catch (err) {
-            console.error(err);
-            alert("Error issuing certificate");
+            setErrorMsg(err.response?.data?.message || "Failed to issue certificate.");
+        } finally {
+            setIssuing(false);
         }
     };
 
     const downloadCertificate = async (id, userName, workshopTitle) => {
         try {
+            setDownloading(id);
             const response = await api.get(`/certificates/download/${id}`, {
                 responseType: 'blob'
             });
@@ -57,9 +66,11 @@ export default function Certificates() {
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
+            toast.success("Certificate downloaded.");
         } catch (err) {
-            console.error(err);
-            alert("Error downloading certificate");
+            toast.error("Failed to download certificate.");
+        } finally {
+            setDownloading(null);
         }
     };
 
@@ -82,6 +93,12 @@ export default function Certificates() {
                             Issue Certificate
                         </h2>
                     </div>
+
+                    {errorMsg && (
+                        <div className='mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400'>
+                            {errorMsg}
+                        </div>
+                    )}
 
                     <form onSubmit={issueCertificate} className='grid gap-5 sm:grid-cols-2'>
                         <div>
@@ -125,10 +142,11 @@ export default function Certificates() {
                         <div className='sm:col-span-2'>
                             <button
                                 type='submit'
-                                className='inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
+                                disabled={issuing}
+                                className='inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
                             >
                                 <Award className='h-4 w-4' />
-                                Issue Certificate
+                                {issuing ? "Issuing..." : "Issue Certificate"}
                             </button>
                         </div>
                     </form>
@@ -166,10 +184,11 @@ export default function Certificates() {
                                 <td className='px-6 py-4 text-right'>
                                     <button
                                         onClick={() => downloadCertificate(cert._id, cert.user?.name || 'User', cert.workshop?.title || 'Workshop')}
-                                        className='inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
+                                        disabled={downloading === cert._id}
+                                        className='inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
                                     >
                                         <Download className='h-4 w-4' />
-                                        Download
+                                        {downloading === cert._id ? "Downloading..." : "Download"}
                                     </button>
                                 </td>
                             </tr>

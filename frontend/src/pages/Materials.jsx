@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import api from '../api/axios';
 import {useAuth} from '../context/AuthContext';
 import {Plus, FileText, ExternalLink} from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Materials() {
     const {user} = useAuth();
@@ -12,11 +13,13 @@ export default function Materials() {
     const [workshop, setWorkshop] = useState('');
     const [title, setTitle] = useState('');
     const [fileUrl, setFileUrl] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         api.get('/workshops')
             .then(res => setWorkshops(res.data))
-            .catch(err => console.error(err));
+            .catch(err => toast.error("Failed to load workshops"));
     }, []);
 
     const loadMaterials = async (workshopId = '') => {
@@ -27,7 +30,7 @@ export default function Materials() {
             setMaterials(res.data);
         }
         catch (err) {
-            console.error(err);
+            toast.error("Failed to load materials");
         }
     };
 
@@ -37,6 +40,8 @@ export default function Materials() {
 
     const addMaterial = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
+        setSubmitting(true);
         try {
             await api.post('/materials', {
                 workshop,
@@ -49,10 +54,12 @@ export default function Materials() {
             setWorkshop('');
 
             loadMaterials();
+            toast.success("Material added successfully!");
         }
         catch (err) {
-            console.error(err);
-            alert("Error adding material");
+            setErrorMsg(err.response?.data?.message || "Error adding material");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -75,6 +82,12 @@ export default function Materials() {
                             Add Material
                         </h2>
                     </div>
+
+                    {errorMsg && (
+                        <div className='mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400 max-w-3xl'>
+                            {errorMsg}
+                        </div>
+                    )}
 
                     <form onSubmit={addMaterial} className='grid gap-5 sm:grid-cols-2 max-w-3xl'>
                         <div className='sm:col-span-2'>
@@ -123,9 +136,13 @@ export default function Materials() {
                         </div>
 
                         <div className='sm:col-span-2'>
-                            <button className='inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'>
+                            <button
+                                type='submit'
+                                disabled={submitting}
+                                className='inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
+                            >
                                 <Plus className='h-4 w-4' />
-                                Add Material
+                                {submitting ? "Adding..." : "Add Material"}
                             </button>
                         </div>
                     </form>

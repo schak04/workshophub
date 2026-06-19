@@ -6,12 +6,15 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Workshops() {
     const [workshops, setWorkshops] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const { user } = useAuth();
 
     useEffect(() => {
         api.get('/workshops')
             .then(res => setWorkshops(res.data))
-            .catch(err => console.error(err));
+            .catch(err => setError("Failed to load workshops."))
+            .finally(() => setLoading(false));
     }, []);
 
     return (
@@ -36,6 +39,12 @@ export default function Workshops() {
                     </Link>
                 )}
             </div>
+
+            {error && (
+                <div className='rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400'>
+                    {error}
+                </div>
+            )}
 
             <div className='overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'>
                 <table className='min-w-full text-sm'>
@@ -68,7 +77,11 @@ export default function Workshops() {
                     </tbody>
                 </table>
 
-                {workshops.length === 0 && (
+                {loading ? (
+                    <div className='px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400'>
+                        Loading workshops...
+                    </div>
+                ) : workshops.length === 0 && !error && (
                     <div className='px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400'>
                         No workshops available.
                     </div>

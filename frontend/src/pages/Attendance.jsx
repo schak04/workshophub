@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { CheckCircle, XCircle, Clock, CalendarDays } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 function AttendancePill({ attended }) {
     if (attended === null || attended === undefined) {
@@ -30,7 +31,7 @@ function ParticipantAttendance() {
     useEffect(() => {
         api.get('/attendance/my')
             .then(res => setData(res.data))
-            .catch(err => console.error(err))
+            .catch(err => toast.error("Failed to load attendance"))
             .finally(() => setLoading(false));
     }, []);
 
@@ -143,7 +144,7 @@ export default function Attendance() {
                 setWorkshops(res.data);
             }
             catch (err) {
-                console.error(err);
+                toast.error("Failed to load workshops");
             }
         };
         fetchWorkshops();
@@ -163,7 +164,7 @@ export default function Attendance() {
             api.get(`/attendance/workshop/${selectedWorkshop}?date=${selectedDate}`)
                 .then(res => setAttendance(res.data))
                 .catch(err => {
-                    console.error(err);
+                    toast.error("Failed to load attendance for this date");
                     setAttendance([]);
                 });
         }
@@ -179,7 +180,7 @@ export default function Attendance() {
 
     const toggleAttendance = async (regId, current) => {
         if (!selectedDate) {
-            alert('Please select a date first');
+            toast.error("Please select a date first");
             return;
         }
 
@@ -199,9 +200,8 @@ export default function Attendance() {
             });
         }
         catch (err) {
-            console.error(err);
             const message = err.response?.data?.message || "Error marking attendance";
-            alert(message);
+            toast.error(message);
         }
     };
 

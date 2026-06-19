@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { XCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 function StatusPill({ status }) {
     const s = (status || '').toLowerCase();
@@ -25,6 +26,7 @@ export default function Registrations() {
     const [registrations, setRegistrations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [unregisteringId, setUnregisteringId] = useState(null);
 
     useEffect(() => {
         const fetchRegistrations = async () => {
@@ -45,13 +47,17 @@ export default function Registrations() {
     const handleUnregister = async (registrationId) => {
         try {
             setError('');
+            setUnregisteringId(registrationId);
             await api.put(`/registrations/${registrationId}/unregister`);
             setRegistrations(registrations.map(reg =>
                 reg._id === registrationId ? { ...reg, status: 'cancelled' } : reg
             ));
+            toast.success("Successfully unregistered from workshop");
         } catch (err) {
-            console.error(err);
-            setError('Failed to unregister');
+            const message = err.response?.data?.message || 'Failed to unregister';
+            toast.error(message);
+        } finally {
+            setUnregisteringId(null);
         }
     };
 
@@ -145,10 +151,11 @@ export default function Registrations() {
                                             {reg.status === 'registered' ? (
                                                 <button
                                                     onClick={() => handleUnregister(reg._id)}
-                                                    className='inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 transition-colors'
+                                                    disabled={unregisteringId === reg._id}
+                                                    className='inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 dark:bg-red-500 dark:hover:bg-red-600 transition-colors'
                                                 >
                                                     <XCircle className='h-4 w-4' />
-                                                    Unregister
+                                                    {unregisteringId === reg._id ? "Unregistering..." : "Unregister"}
                                                 </button>
                                             ) : (
                                                 <span className='text-sm text-slate-400 dark:text-slate-500'>-</span>

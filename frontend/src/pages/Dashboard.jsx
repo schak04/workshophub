@@ -48,6 +48,7 @@ export default function Dashboard() {
     const { user } = useAuth();
     const [recentWorkshops, setRecentWorkshops] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         api.get('/workshops')
@@ -88,7 +89,7 @@ export default function Dashboard() {
                 setLoading(false);
             })
             .catch(err => {
-                console.error(err);
+                setError("Failed to load recent workshops.");
                 setLoading(false);
             });
     }, []);
@@ -136,6 +137,10 @@ export default function Dashboard() {
                     {loading ? (
                         <div className="px-5 py-5 text-center text-sm text-slate-500 dark:text-slate-400">
                             Loading workshops...
+                        </div>
+                    ) : error ? (
+                        <div className="px-5 py-5 text-center text-sm text-red-500 dark:text-red-400">
+                            {error}
                         </div>
                     ) : recentWorkshops.length === 0 ? (
                         <div className="px-5 py-5 text-center text-sm text-slate-500 dark:text-slate-400">

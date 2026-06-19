@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function CreateWorkshop() {
     const { user } = useAuth();
@@ -28,6 +29,7 @@ export default function CreateWorkshop() {
     });
 
     const [errorMsg, setErrorMsg] = useState('');
+    const [creating, setCreating] = useState(false);
 
     const handleChange = e =>
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,11 +37,15 @@ export default function CreateWorkshop() {
     const submit = async e => {
         e.preventDefault();
         setErrorMsg('');
+        setCreating(true);
         try {
             await api.post('/workshops', form);
+            toast.success("Workshop created successfully!");
             navigate('/workshops');
         } catch (err) {
             setErrorMsg(err.response?.data?.message || 'Error creating workshop');
+        } finally {
+            setCreating(false);
         }
     };
 
@@ -78,9 +84,10 @@ export default function CreateWorkshop() {
                 <button
                     type='submit'
                     form='create-workshop'
-                    className='rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
+                    disabled={creating}
+                    className='rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors'
                 >
-                    Create
+                    {creating ? "Creating..." : "Create"}
                 </button>
             </div>
 

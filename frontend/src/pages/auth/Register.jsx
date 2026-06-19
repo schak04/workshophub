@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
 import {useAuth} from '../../context/AuthContext';
 import {UserPlus} from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Register() {
     const {signup} = useAuth();
@@ -14,15 +15,18 @@ export default function Register() {
         role: 'participant'
     });
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     const submit = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
         setLoading(true);
         try {
             await signup(form);
+            toast.success("Account created successfully!");
             navigate('/login');
         } catch (error) {
-            console.error('Registration failed:', error);
+            setErrorMsg(error.response?.data?.message || "An unexpected error occurred. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -45,6 +49,12 @@ export default function Register() {
                         <UserPlus className='h-5 w-5 text-slate-700 dark:text-slate-200' />
                     </div>
                 </div>
+
+                {errorMsg && (
+                    <div className='mt-6 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400'>
+                        {errorMsg}
+                    </div>
+                )}
 
                 <form onSubmit={submit} className='mt-6 space-y-5'>
                     <div>

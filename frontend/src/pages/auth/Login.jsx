@@ -8,15 +8,17 @@ export default function Login() {
     const navigate = useNavigate();
     const [form, setForm] = useState({email: '', password: ''});
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     const submit = async (e) => {
         e.preventDefault();
+        setErrorMsg('');
         setLoading(true);
         try {
             await login(form);
             navigate('/');
         } catch (error) {
-            console.error("Login failed:", error);
+            setErrorMsg(error.response?.data?.message || "An unexpected error occurred. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -39,6 +41,12 @@ export default function Login() {
                         <LogIn className='h-5 w-5 text-slate-700 dark:text-slate-200' />
                     </div>
                 </div>
+
+                {errorMsg && (
+                    <div className='mt-6 rounded-lg bg-red-50 p-4 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-400'>
+                        {errorMsg}
+                    </div>
+                )}
 
                 <form onSubmit={submit} className='mt-6 space-y-5'>
                     <div>
