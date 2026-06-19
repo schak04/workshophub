@@ -67,7 +67,11 @@ export default function WorkshopDetails() {
                         <div>
                             <p className='text-xs font-medium text-slate-500 dark:text-slate-400'>Date</p>
                             <p className='text-sm font-medium text-slate-900 dark:text-slate-100'>
-                                {new Date(workshop.date).toDateString()}
+                                {workshop.startDate && workshop.endDate ? (
+                                    new Date(workshop.startDate).toDateString() === new Date(workshop.endDate).toDateString()
+                                        ? new Date(workshop.startDate).toDateString()
+                                        : `${new Date(workshop.startDate).toDateString()} - ${new Date(workshop.endDate).toDateString()}`
+                                ) : '-'}
                             </p>
                         </div>
                     </div>

@@ -90,7 +90,8 @@ const seed = async () => {
             {
                 title: 'Kernel Development in C',
                 description: 'A deep dive into kernel architecture, memory management, and process scheduling.',
-                date: new Date('2026-06-25'),
+                startDate: new Date('2026-06-25'),
+                endDate: new Date('2026-06-28'),
                 time: '2:00 PM - 5:00 PM',
                 venue: 'Room A-301',
                 seats: 30,
@@ -99,7 +100,8 @@ const seed = async () => {
             {
                 title: 'Systems Programming and UNIX',
                 description: 'Learn system calls, file systems, and multi-process communication in C.',
-                date: new Date('2026-06-17'),
+                startDate: new Date('2026-06-17'),
+                endDate: new Date('2026-06-19'),
                 time: '10:00 AM - 1:00 PM',
                 venue: 'Lab B-105',
                 seats: 50,
@@ -108,7 +110,8 @@ const seed = async () => {
             {
                 title: 'Compiler Design and COBOL',
                 description: 'Explore the internals of compiler construction, lexical analysis, and code generation.',
-                date: new Date('2026-06-13'),
+                startDate: new Date('2026-06-13'),
+                endDate: new Date('2026-06-15'),
                 time: '1:00 PM - 4:00 PM',
                 venue: 'Design Studio',
                 seats: 25,
@@ -117,7 +120,8 @@ const seed = async () => {
             {
                 title: 'Algorithms and Analytical Programming',
                 description: 'Study the first computer algorithm, mechanical calculation, and computational complexity.',
-                date: new Date('2026-06-27'),
+                startDate: new Date('2026-06-27'),
+                endDate: new Date('2026-06-27'),
                 time: '9:00 AM - 12:00 PM',
                 venue: 'Virtual',
                 seats: 40,
@@ -154,12 +158,19 @@ const seed = async () => {
         for (let i = 0; i < compilerRegs.length; i++) {
             attendanceData.push({
                 registration: compilerRegs[i]._id,
+                date: new Date('2026-06-13'),
                 attended: i < 20
+            });
+            attendanceData.push({
+                registration: compilerRegs[i]._id,
+                date: new Date('2026-06-14'),
+                attended: i < 18
             });
         }
         for (let i = 0; i < unixRegs.length; i++) {
             attendanceData.push({
                 registration: unixRegs[i]._id,
+                date: new Date('2026-06-17'),
                 attended: i < 40
             });
         }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import { CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, CalendarDays } from 'lucide-react';
 
 function AttendancePill({ attended }) {
-    if (attended === null) {
+    if (attended === null || attended === undefined) {
         return (
             <span className='inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'>
                 <Clock className='h-3 w-3' />
@@ -24,12 +24,12 @@ function AttendancePill({ attended }) {
 }
 
 function ParticipantAttendance() {
-    const [records, setRecords] = useState([]);
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         api.get('/attendance/my')
-            .then(res => setRecords(res.data))
+            .then(res => setData(res.data))
             .catch(err => console.error(err))
             .finally(() => setLoading(false));
     }, []);
@@ -49,36 +49,55 @@ function ParticipantAttendance() {
                 </p>
             </div>
 
-            {records.length === 0 ? (
+            {data.length === 0 ? (
                 <div className='rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300'>
                     You are not registered for any workshops yet.
                 </div>
             ) : (
-                <div className='overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'>
-                    <table className='min-w-full text-sm'>
-                        <thead className='bg-slate-50 dark:bg-slate-950'>
-                            <tr className='text-left text-slate-600 dark:text-slate-300'>
-                                <th className='px-6 py-4 font-medium'>Workshop</th>
-                                <th className='px-6 py-4 font-medium'>Date</th>
-                                <th className='px-6 py-4 font-medium'>Attendance</th>
-                            </tr>
-                        </thead>
-                        <tbody className='divide-y divide-slate-200 dark:divide-slate-800'>
-                            {records.map(r => (
-                                <tr key={r.registration} className='hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors'>
-                                    <td className='px-6 py-4 font-medium text-slate-900 dark:text-slate-100'>
-                                        {r.workshop?.title || '-'}
-                                    </td>
-                                    <td className='px-6 py-4 text-slate-600 dark:text-slate-400'>
-                                        {r.workshop?.date ? new Date(r.workshop.date).toLocaleDateString() : '-'}
-                                    </td>
-                                    <td className='px-6 py-4'>
-                                        <AttendancePill attended={r.attended} />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className='space-y-4'>
+                    {data.map(reg => (
+                        <div key={reg.registration} className='overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'>
+                            <div className='bg-slate-50 px-6 py-4 border-b border-slate-200 dark:bg-slate-950 dark:border-slate-800'>
+                                <h3 className='font-medium text-slate-900 dark:text-slate-100'>
+                                    {reg.workshop?.title || 'Unknown Workshop'}
+                                </h3>
+                                <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>
+                                    {reg.workshop?.startDate && reg.workshop?.endDate ? (
+                                        new Date(reg.workshop.startDate).toDateString() === new Date(reg.workshop.endDate).toDateString()
+                                            ? new Date(reg.workshop.startDate).toDateString()
+                                            : `${new Date(reg.workshop.startDate).toDateString()} - ${new Date(reg.workshop.endDate).toDateString()}`
+                                    ) : '-'}
+                                </p>
+                            </div>
+                            
+                            {reg.records.length === 0 ? (
+                                <div className='px-6 py-4 text-sm text-slate-500 dark:text-slate-400'>
+                                    No attendance has been recorded for this workshop yet.
+                                </div>
+                            ) : (
+                                <table className='min-w-full text-sm'>
+                                    <thead className='bg-white dark:bg-slate-900'>
+                                        <tr className='text-left text-xs text-slate-500 uppercase tracking-wider dark:text-slate-400 border-b border-slate-100 dark:border-slate-800'>
+                                            <th className='px-6 py-3 font-medium'>Date</th>
+                                            <th className='px-6 py-3 font-medium'>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className='divide-y divide-slate-100 dark:divide-slate-800'>
+                                        {reg.records.map((record, i) => (
+                                            <tr key={i} className='hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors'>
+                                                <td className='px-6 py-3 text-slate-600 dark:text-slate-300'>
+                                                    {new Date(record.date).toDateString()}
+                                                </td>
+                                                <td className='px-6 py-3'>
+                                                    <AttendancePill attended={record.attended} />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    ))}
                 </div>
             )}
         </div>
@@ -107,6 +126,7 @@ export default function Attendance() {
 
     const [workshops, setWorkshops] = useState([]);
     const [selectedWorkshop, setSelectedWorkshop] = useState('');
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [registrations, setRegistrations] = useState([]);
     const [attendance, setAttendance] = useState([]);
 
@@ -130,23 +150,43 @@ export default function Attendance() {
     }, [user]);
 
     useEffect(() => {
-        if (!selectedWorkshop) return;
+        if (!selectedWorkshop) {
+            setRegistrations([]);
+            setAttendance([]);
+            return;
+        }
 
         api.get(`/registrations?workshop=${selectedWorkshop}`)
             .then(res => setRegistrations(res.data));
 
-        api.get(`/attendance/workshop/${selectedWorkshop}`)
-            .then(res => setAttendance(res.data));
-    }, [selectedWorkshop]);
+        if (selectedDate) {
+            api.get(`/attendance/workshop/${selectedWorkshop}?date=${selectedDate}`)
+                .then(res => setAttendance(res.data))
+                .catch(err => {
+                    console.error(err);
+                    setAttendance([]);
+                });
+        }
+    }, [selectedWorkshop, selectedDate]);
+
+    const activeWs = workshops.find(w => w._id === selectedWorkshop);
+    const minDate = activeWs?.startDate ? activeWs.startDate.split('T')[0] : '';
+    const maxDate = activeWs?.endDate ? activeWs.endDate.split('T')[0] : '';
 
     const getAttendanceForReg = (regId) => {
         return attendance.find(a => a.registration?._id === regId || a.registration === regId);
     };
 
     const toggleAttendance = async (regId, current) => {
+        if (!selectedDate) {
+            alert('Please select a date first');
+            return;
+        }
+
         try {
             const res = await api.post('/attendance/mark', {
                 registrationId: regId,
+                date: selectedDate,
                 attended: !current
             });
 
@@ -172,53 +212,84 @@ export default function Attendance() {
                     Manage Attendance
                 </h1>
                 <p className='mt-1 text-sm text-slate-600 dark:text-slate-400'>
-                    Select a workshop and mark participant attendance.
+                    Select a workshop and a date to mark participant attendance.
                 </p>
             </div>
 
-            <div className='max-w-md'>
-                <label className='block text-sm font-medium text-slate-700 dark:text-slate-200'>
-                    Workshop
-                </label>
-                <select
-                    className='mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-teal-400/25 dark:focus:border-teal-400'
-                    value={selectedWorkshop}
-                    onChange={e => setSelectedWorkshop(e.target.value)}
-                >
-                    <option value=''>Select Workshop</option>
-                    {workshops.map(w => (
-                        <option key={w._id} value={w._id}>
-                            {w.title}
-                        </option>
-                    ))}
-                </select>
+            <div className='grid gap-6 sm:grid-cols-2 max-w-2xl'>
+                <div>
+                    <label className='block text-sm font-medium text-slate-700 dark:text-slate-200'>
+                        Workshop
+                    </label>
+                    <select
+                        className='mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-teal-400/25 dark:focus:border-teal-400'
+                        value={selectedWorkshop}
+                        onChange={e => setSelectedWorkshop(e.target.value)}
+                    >
+                        <option value=''>Select Workshop</option>
+                        {workshops.map(w => (
+                            <option key={w._id} value={w._id}>
+                                {w.title}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {selectedWorkshop && (
+                    <div>
+                        <label className='block text-sm font-medium text-slate-700 dark:text-slate-200'>
+                            Date
+                        </label>
+                        <div className='relative mt-2'>
+                            <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
+                                <CalendarDays className='h-4 w-4 text-slate-400' />
+                            </div>
+                            <input
+                                type='date'
+                                min={minDate}
+                                max={maxDate}
+                                value={selectedDate}
+                                onChange={e => setSelectedDate(e.target.value)}
+                                className='block w-full rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/30 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-teal-400 dark:focus:ring-teal-400/25'
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
 
             {!selectedWorkshop && (
                 <div className='rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300'>
-                    Please select a workshop.
+                    Please select a workshop to view the attendance roster.
                 </div>
             )}
 
             {selectedWorkshop && registrations.length === 0 && (
                 <div className='rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300'>
-                    No registrations yet.
+                    No participants have registered for this workshop yet.
                 </div>
             )}
 
-            {registrations.length > 0 && (
+            {selectedWorkshop && registrations.length > 0 && selectedDate && (
                 <div className='overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'>
+                    <div className='bg-slate-50 px-6 py-4 border-b border-slate-200 dark:bg-slate-950 dark:border-slate-800 flex justify-between items-center'>
+                        <h3 className='font-medium text-slate-900 dark:text-slate-100'>
+                            Attendance Roster
+                        </h3>
+                        <span className='text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700'>
+                            {new Date(selectedDate).toDateString()}
+                        </span>
+                    </div>
                     <table className='min-w-full text-sm'>
-                        <thead className='bg-slate-50 dark:bg-slate-950'>
-                            <tr className='text-left text-slate-600 dark:text-slate-300'>
-                                <th className='px-6 py-4 font-medium'>Name</th>
-                                <th className='px-6 py-4 font-medium'>Email</th>
-                                <th className='px-6 py-4 font-medium'>Status</th>
-                                <th className='px-6 py-4 font-medium text-right'>Action</th>
+                        <thead className='bg-white dark:bg-slate-900'>
+                            <tr className='text-left text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800'>
+                                <th className='px-6 py-3 font-medium'>Participant Name</th>
+                                <th className='px-6 py-3 font-medium'>Email</th>
+                                <th className='px-6 py-3 font-medium'>Status</th>
+                                <th className='px-6 py-3 font-medium text-right'>Action</th>
                             </tr>
                         </thead>
 
-                        <tbody className='divide-y divide-slate-200 dark:divide-slate-800'>
+                        <tbody className='divide-y divide-slate-100 dark:divide-slate-800'>
                             {registrations.map(reg => {
                                 const att = getAttendanceForReg(reg._id);
                                 const attended = att?.attended || false;

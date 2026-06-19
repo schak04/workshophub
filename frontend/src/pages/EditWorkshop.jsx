@@ -20,7 +20,12 @@ export default function EditWorkshop() {
 
     useEffect(() => {
         api.get(`/workshops/${id}`)
-            .then(res => setForm(res.data.workshop))
+            .then(res => {
+                const ws = res.data.workshop;
+                ws.startDate = ws.startDate ? ws.startDate.split('T')[0] : '';
+                ws.endDate = ws.endDate ? ws.endDate.split('T')[0] : '';
+                setForm(ws);
+            })
             .catch(err => console.error(err));
     }, [id]);
 
@@ -38,7 +43,8 @@ export default function EditWorkshop() {
     const fields = [
         { key: 'title', label: 'Title', type: 'text' },
         { key: 'description', label: 'Description', type: 'text', textarea: true },
-        { key: 'date', label: 'Date', type: 'date' },
+        { key: 'startDate', label: 'Start Date', type: 'date' },
+        { key: 'endDate', label: 'End Date', type: 'date' },
         { key: 'time', label: 'Time', type: 'text' },
         { key: 'venue', label: 'Venue', type: 'text' },
         { key: 'seats', label: 'Seats', type: 'number' }

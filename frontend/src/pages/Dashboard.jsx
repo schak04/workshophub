@@ -52,26 +52,38 @@ export default function Dashboard() {
     useEffect(() => {
         api.get('/workshops')
             .then(res => {
-                const sorted = res.data.sort((a, b) => new Date(b.date) - new Date(a.date));
-                const formatted = sorted.slice(0, 4).map(ws => ({
-                    title: ws.title,
-                    instructor: ws.instructor?.name || 'N/A',
-                    date: ws.date ? new Date(ws.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
-                    time: ws.time || '',
-                    location: ws.venue || '',
-                    status: (() => {
-                        if (!ws.date) return 'Upcoming';
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const eventDate = new Date(ws.date);
-                        eventDate.setHours(0, 0, 0, 0);
-                        if (eventDate < today) return 'Completed';
-                        if (eventDate.getTime() === today.getTime()) return 'In Progress';
-                        return 'Upcoming';
-                    })(),
-                    current: ws.current || 0,
-                    total: ws.seats || 0
-                }));
+                const sorted = res.data.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+                const formatted = sorted.slice(0, 4).map(ws => {
+                    let dateStr = '';
+                    if (ws.startDate && ws.endDate) {
+                        const start = new Date(ws.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                        const end = new Date(ws.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                        dateStr = start === end ? start : `${start} - ${end}`;
+                    }
+
+                    return {
+                        title: ws.title,
+                        instructor: ws.instructor?.name || 'N/A',
+                        date: dateStr,
+                        time: ws.time || '',
+                        location: ws.venue || '',
+                        status: (() => {
+                            if (!ws.startDate || !ws.endDate) return 'Upcoming';
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            const startDate = new Date(ws.startDate);
+                            startDate.setHours(0, 0, 0, 0);
+                            const endDate = new Date(ws.endDate);
+                            endDate.setHours(23, 59, 59, 999);
+
+                            if (endDate < today) return 'Completed';
+                            if (today >= startDate && today <= endDate) return 'In Progress';
+                            return 'Upcoming';
+                        })(),
+                        current: ws.current || 0,
+                        total: ws.seats || 0
+                    };
+                });
                 setRecentWorkshops(formatted);
                 setLoading(false);
             })

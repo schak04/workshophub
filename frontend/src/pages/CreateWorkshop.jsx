@@ -19,7 +19,8 @@ export default function CreateWorkshop() {
     const [form, setForm] = useState({
         title: '',
         description: '',
-        date: '',
+        startDate: '',
+        endDate: '',
         time: '',
         venue: '',
         seats: '',
@@ -38,7 +39,8 @@ export default function CreateWorkshop() {
     const fields = [
         { key: 'title', label: 'Title', placeholder: "Workshop title", type: 'text' },
         { key: 'description', label: 'Description', placeholder: "Short description for the workshop", type: 'text' },
-        { key: 'date', label: 'Date', placeholder: "", type: 'date' },
+        { key: 'startDate', label: 'Start Date', placeholder: "", type: 'date' },
+        { key: 'endDate', label: 'End Date', placeholder: "", type: 'date' },
         { key: 'time', label: 'Time', placeholder: "e.g. 2:00 PM - 5:00 PM", type: 'text' },
         { key: 'venue', label: 'Venue', placeholder: "e.g. Room A-301 / Virtual", type: 'text' },
         { key: 'seats', label: 'Seats', placeholder: "e.g. 30", type: 'number' },

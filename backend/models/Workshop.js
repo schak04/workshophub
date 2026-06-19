@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const WorkshopSchema = new mongoose.Schema({
     title: {type: String, required:true},
     description: String,
-    date: Date,
+    startDate: {type: Date, required: true},
+    endDate: {type: Date, required: true},
     time: String,
     venue: String,
     seats: Number,
