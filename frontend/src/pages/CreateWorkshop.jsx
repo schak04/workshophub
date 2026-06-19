@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import api from '../api/axios';
@@ -30,6 +30,13 @@ export default function CreateWorkshop() {
 
     const [errorMsg, setErrorMsg] = useState('');
     const [creating, setCreating] = useState(false);
+    const [instructors, setInstructors] = useState([]);
+
+    useEffect(() => {
+        api.get('/users?role=instructor')
+            .then(res => setInstructors(res.data))
+            .catch(err => toast.error("Failed to load instructors"));
+    }, []);
 
     const handleChange = e =>
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -57,7 +64,7 @@ export default function CreateWorkshop() {
         { key: 'time', label: 'Time', placeholder: "e.g. 2:00 PM - 5:00 PM", type: 'text' },
         { key: 'venue', label: 'Venue', placeholder: "e.g. Room A-301 / Virtual", type: 'text' },
         { key: 'seats', label: 'Seats', placeholder: "e.g. 30", type: 'number' },
-        { key: 'instructor', label: 'Instructor', placeholder: "Instructor ID", type: 'text' },
+        { key: 'instructor', label: 'Instructor', type: 'select' },
     ];
 
     return (
@@ -113,6 +120,20 @@ export default function CreateWorkshop() {
                                     rows={4}
                                     className='mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-teal-400/25 dark:focus:border-teal-400'
                                 />
+                            ) : f.key === 'instructor' ? (
+                                <select
+                                    name={f.key}
+                                    value={form[f.key]}
+                                    onChange={handleChange}
+                                    className='mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-teal-400/25 dark:focus:border-teal-400'
+                                >
+                                    <option value=''>Select Instructor</option>
+                                    {instructors.map(inst => (
+                                        <option key={inst._id} value={inst._id}>
+                                            {inst.name} ({inst.email})
+                                        </option>
+                                    ))}
+                                </select>
                             ) : (
                                 <input
                                     name={f.key}

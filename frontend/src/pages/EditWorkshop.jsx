@@ -10,6 +10,7 @@ export default function EditWorkshop() {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [form, setForm] = useState(null);
+    const [instructors, setInstructors] = useState([]);
 
     if (user?.role !== 'admin') {
         return (
@@ -25,12 +26,21 @@ export default function EditWorkshop() {
                 const ws = res.data.workshop;
                 ws.startDate = ws.startDate ? ws.startDate.split('T')[0] : '';
                 ws.endDate = ws.endDate ? ws.endDate.split('T')[0] : '';
+                if (ws.instructor && typeof ws.instructor === 'object') {
+                    ws.instructor = ws.instructor._id;
+                }
                 setForm(ws);
             })
             .catch(err => {
                 toast.error("Failed to load workshop data");
             });
     }, [id]);
+
+    useEffect(() => {
+        api.get('/users?role=instructor')
+            .then(res => setInstructors(res.data))
+            .catch(err => toast.error("Failed to load instructors"));
+    }, []);
 
     if (!form) return null;
 
@@ -59,7 +69,7 @@ export default function EditWorkshop() {
         { key: 'time', label: 'Time', type: 'text' },
         { key: 'venue', label: 'Venue', type: 'text' },
         { key: 'seats', label: 'Seats', type: 'number' },
-        { key: 'instructor', label: 'Instructor', type: 'text' }
+        { key: 'instructor', label: 'Instructor', type: 'select' }
     ];
 
     return (
@@ -120,6 +130,20 @@ export default function EditWorkshop() {
                                     rows={4}
                                     className='mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-teal-400/25 dark:focus:border-teal-400'
                                 />
+                            ) : f.key === 'instructor' ? (
+                                <select
+                                    name={f.key}
+                                    value={form[f.key] || ''}
+                                    onChange={handleChange}
+                                    className='mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-teal-400/25 dark:focus:border-teal-400'
+                                >
+                                    <option value=''>Select Instructor</option>
+                                    {instructors.map(inst => (
+                                        <option key={inst._id} value={inst._id}>
+                                            {inst.name} ({inst.email})
+                                        </option>
+                                    ))}
+                                </select>
                             ) : (
                                 <input
                                     name={f.key}
