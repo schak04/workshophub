@@ -55,4 +55,31 @@ const getAttendanceByWorkshop = async (req, res) => {
     }
 };
 
-module.exports = {markAttendance, getAttendanceByWorkshop};
+const getMyAttendance = async (req, res) => {
+    try {
+        const registrations = await Registration.find({
+            user: req.user._id,
+            status: 'registered'
+        }).populate('workshop', 'title date');
+
+        const regIds = registrations.map(r => r._id);
+        const attendanceRecords = await Attendance.find({registration: {$in: regIds}});
+
+        const attMap = new Map();
+        attendanceRecords.forEach(a => attMap.set(a.registration.toString(), a.attended));
+
+        const result = registrations.map(reg => ({
+            registration: reg._id,
+            workshop: reg.workshop,
+            attended: attMap.has(reg._id.toString()) ? attMap.get(reg._id.toString()) : null
+        }));
+
+        res.json(result);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({message: "Error fetching attendance"});
+    }
+};
+
+module.exports = {markAttendance, getAttendanceByWorkshop, getMyAttendance};

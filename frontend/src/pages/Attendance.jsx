@@ -1,7 +1,89 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
+
+function AttendancePill({ attended }) {
+    if (attended === null) {
+        return (
+            <span className='inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'>
+                <Clock className='h-3 w-3' />
+                Not marked
+            </span>
+        );
+    }
+    return (
+        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${attended
+            ? 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-200'
+            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200'
+        }`}>
+            {attended ? <CheckCircle className='h-3 w-3' /> : <XCircle className='h-3 w-3' />}
+            {attended ? 'Present' : 'Absent'}
+        </span>
+    );
+}
+
+function ParticipantAttendance() {
+    const [records, setRecords] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.get('/attendance/my')
+            .then(res => setRecords(res.data))
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return <div className='rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900'>Loading...</div>;
+    }
+
+    return (
+        <div className='space-y-6'>
+            <div>
+                <h1 className='text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100'>
+                    My Attendance
+                </h1>
+                <p className='mt-1 text-sm text-slate-600 dark:text-slate-400'>
+                    Your attendance record across registered workshops.
+                </p>
+            </div>
+
+            {records.length === 0 ? (
+                <div className='rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300'>
+                    You are not registered for any workshops yet.
+                </div>
+            ) : (
+                <div className='overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900'>
+                    <table className='min-w-full text-sm'>
+                        <thead className='bg-slate-50 dark:bg-slate-950'>
+                            <tr className='text-left text-slate-600 dark:text-slate-300'>
+                                <th className='px-6 py-4 font-medium'>Workshop</th>
+                                <th className='px-6 py-4 font-medium'>Date</th>
+                                <th className='px-6 py-4 font-medium'>Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody className='divide-y divide-slate-200 dark:divide-slate-800'>
+                            {records.map(r => (
+                                <tr key={r.registration} className='hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors'>
+                                    <td className='px-6 py-4 font-medium text-slate-900 dark:text-slate-100'>
+                                        {r.workshop?.title || '-'}
+                                    </td>
+                                    <td className='px-6 py-4 text-slate-600 dark:text-slate-400'>
+                                        {r.workshop?.date ? new Date(r.workshop.date).toLocaleDateString() : '-'}
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <AttendancePill attended={r.attended} />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+        </div>
+    );
+}
 
 function StatusPill({ attended }) {
     return (
@@ -17,11 +99,16 @@ function StatusPill({ attended }) {
 }
 
 export default function Attendance() {
+    const {user} = useAuth();
+
+    if (user?.role === 'participant') {
+        return <ParticipantAttendance />;
+    }
+
     const [workshops, setWorkshops] = useState([]);
     const [selectedWorkshop, setSelectedWorkshop] = useState('');
     const [registrations, setRegistrations] = useState([]);
     const [attendance, setAttendance] = useState([]);
-    const {user} = useAuth();
 
     useEffect(() => {
         if (!user) return;
@@ -127,9 +214,7 @@ export default function Attendance() {
                                 <th className='px-6 py-4 font-medium'>Name</th>
                                 <th className='px-6 py-4 font-medium'>Email</th>
                                 <th className='px-6 py-4 font-medium'>Status</th>
-                                <th className='px-6 py-4 font-medium text-right'>
-                                    Action
-                                </th>
+                                <th className='px-6 py-4 font-medium text-right'>Action</th>
                             </tr>
                         </thead>
 
@@ -155,15 +240,10 @@ export default function Attendance() {
                                         <td className='px-6 py-4 text-right'>
                                             <button
                                                 className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${attended
-                                                        ? 'bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600'
-                                                        : 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200'
-                                                    }`}
-                                                onClick={() =>
-                                                    toggleAttendance(
-                                                        reg._id,
-                                                        attended
-                                                    )
-                                                }
+                                                    ? 'bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600'
+                                                    : 'bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200'
+                                                }`}
+                                                onClick={() => toggleAttendance(reg._id, attended)}
                                             >
                                                 {attended ? (
                                                     <>

@@ -39,18 +39,12 @@ export default function Navbar() {
             { to: '/', label: 'Dashboard', icon: LayoutDashboard },
             { to: '/workshops', label: 'Workshops', icon: Calendar },
             { to: '/registrations', label: 'Registrations', icon: Users },
+            { to: '/attendance', label: 'Attendance', icon: ClipboardCheck },
             { to: '/materials', label: 'Materials', icon: FileText },
             { to: '/feedback', label: 'Feedback', icon: MessageSquare },
             { to: '/certificates', label: 'Certificates', icon: Award },
         ];
 
-        if (user.role !== 'participant') {
-            items.splice(3, 0, {
-                to: '/attendance',
-                label: 'Attendance',
-                icon: ClipboardCheck
-            });
-        }
         return items;
     }, [user]);
 

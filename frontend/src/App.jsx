@@ -99,7 +99,7 @@ function AppLayout() {
                         <Route
                             path='/attendance'
                             element={
-                                <ProtectedRoute roles={['admin', 'instructor']}>
+                                <ProtectedRoute>
                                     <Attendance />
                                 </ProtectedRoute>
                             }
