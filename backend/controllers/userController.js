@@ -12,7 +12,9 @@ const getMyProfile = async (req, res) => {
 // admin only
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('-password');
+        const query = {};
+        if (req.query.role) query.role = req.query.role;
+        const users = await User.find(query).select('-password');
         res.json(users);
     }
     catch (err) {

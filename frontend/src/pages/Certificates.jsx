@@ -22,7 +22,7 @@ export default function Certificates() {
     useEffect(() => {
         if (user?.role !== 'admin') return;
         api.get('/workshops').then(res => setWorkshops(res.data));
-        api.get('/users').then(res => setUsers(res.data));
+        api.get('/users?role=participant').then(res => setUsers(res.data));
     }, [user]);
 
     const issueCertificate = async (e) => {
