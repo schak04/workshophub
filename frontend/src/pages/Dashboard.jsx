@@ -47,10 +47,12 @@ function StatusPill({ status }) {
 export default function Dashboard() {
     const { user } = useAuth();
     const [recentWorkshops, setRecentWorkshops] = useState([]);
+    const [statsData, setStatsData] = useState({ workshops: 0, participants: 0, certificates: 0, attendance: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
+        api.get('/stats').then(res => setStatsData(res.data)).catch(() => {});
         api.get('/workshops')
             .then(res => {
                 const sorted = res.data.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
@@ -97,10 +99,10 @@ export default function Dashboard() {
     if (!user) return null;
 
     const stats = [
-        { title: 'Total Workshops', value: '24', sub: '+3 this month' },
-        { title: 'Active Participants', value: '482', sub: '+12% from last month' },
-        { title: 'Certificates Issued', value: '156', sub: '+8 this week' },
-        { title: 'Average Attendance', value: '87%', sub: '+2.5% improvement' },
+        { title: 'Total Workshops', value: statsData.workshops.toString(), sub: 'Overall total' },
+        { title: 'Active Participants', value: statsData.participants.toString(), sub: 'Registered users' },
+        { title: 'Certificates Issued', value: statsData.certificates.toString(), sub: 'Generated so far' },
+        { title: 'Attendance Rate', value: `${statsData.attendance}%`, sub: 'Across all workshops' },
     ];
 
     const icons = [
