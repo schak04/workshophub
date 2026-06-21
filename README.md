@@ -79,7 +79,7 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 
 ## Author
 
-Copyright (c) 2025 [Saptaparno Chakraborty](https://github.com/schak04).  
+Copyright (c) 2025-2026 [Saptaparno Chakraborty](https://github.com/schak04).  
 All rights reserved.
 
 ---
