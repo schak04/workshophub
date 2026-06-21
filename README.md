@@ -19,11 +19,16 @@ This project is a full-stack web application designed to manage learning/educati
 The system handles workshop creation, registrations, attendance tracking, feedback collection, and certificate generation while enforcing strict role-based access control.  
 It aims to streamline the entire workshop lifecycle for both organizers and participants.
 
-![dashboard_preview_light](public/dashboard_preview_light.png)
-<details>
-<summary>Toggle dark-theme admin dashboard preview</summary>
+<details open>
+<summary>Toggle dark-theme admin dashboard preview (Open by default because this is easier on the eyes)</summary>
 
 ![dashboard_preview_dark](public/dashboard_preview_dark.png)
+</details>
+
+<details>
+<summary>Toggle light-theme admin dashboard preview</summary>
+
+![dashboard_preview_light](public/dashboard_preview_light.png)
 </details>
 
 > [!NOTE]  
