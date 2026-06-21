@@ -19,9 +19,26 @@ const registerForWorkshop = async (req, res) => {
 
 const listRegistrations = async (req, res) => {
     try {
-        const filter = {}; // optional ?workshop=<id> query filter
-        if (req.query.workshop) filter.workshop = req.query.workshop;
-        if (req.user.role === 'participant') filter.user = req.user._id;
+        const filter = {};
+        if (req.user.role === 'participant') {
+            filter.user = req.user._id;
+            if (req.query.workshop) filter.workshop = req.query.workshop;
+        } else if (req.user.role === 'instructor') {
+            const Workshop = require('../models/Workshop');
+            const myWorkshops = await Workshop.find({instructor: req.user._id}).select('_id');
+            const myWorkshopIds = myWorkshops.map(w => w._id.toString());
+            
+            if (req.query.workshop) {
+                if (!myWorkshopIds.includes(req.query.workshop)) {
+                    return res.json([]);
+                }
+                filter.workshop = req.query.workshop;
+            } else {
+                filter.workshop = { $in: myWorkshopIds };
+            }
+        } else {
+            if (req.query.workshop) filter.workshop = req.query.workshop;
+        }
 
         const regs = await Registration.find(filter).populate('workshop').populate('user', 'name email');
         res.json(regs);
