@@ -67,6 +67,7 @@ export default function Dashboard() {
                     return {
                         title: ws.title,
                         instructor: ws.instructor?.name || 'N/A',
+                        instructorId: ws.instructor?._id,
                         date: dateStr,
                         time: ws.time || '',
                         location: ws.venue || '',
@@ -160,7 +161,12 @@ export default function Dashboard() {
                                                 <StatusPill status={w.status} />
                                             </div>
 
-                                            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{w.instructor}</p>
+                                            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                                                {w.instructor}
+                                                {w.instructorId === user?.id && (
+                                                    <span className="ml-2 text-xs italic text-teal-600 dark:text-teal-400">(you)</span>
+                                                )}
+                                            </p>
 
                                             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
                                                 <span className="inline-flex items-center gap-1">

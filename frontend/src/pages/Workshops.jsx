@@ -71,6 +71,9 @@ export default function Workshops() {
                                 </td>
                                 <td className='px-6 py-4 text-slate-600 dark:text-slate-400'>
                                     {ws.instructor?.name || 'N/A'}
+                                    {ws.instructor?._id === user?.id && (
+                                        <span className='ml-2 text-xs italic text-teal-600 dark:text-teal-400'>(you)</span>
+                                    )}
                                 </td>
                             </tr>
                         ))}
