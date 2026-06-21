@@ -22,7 +22,7 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 > [!IMPORTANT]  
 > **Project Status: Complete**  
 > WorkshopHub is a completed personal learning and portfolio project developed independently by [me](#author).  
-> While the core functionality has been fully implemented, the project might still receive occasional refinements and bug fixes in the future by [me](#author). Feedback and discussions are always welcome, but the repository is not intended for external contributions.
+> While the core features have been fully implemented, the project might still receive occasional refinements and bug fixes in the future by [me](#author). Feedback and discussions are always welcome, but the repository is not intended for external contributions.
 
 ![dashboard_preview_dark](public/dashboard_preview_dark.png)
 
