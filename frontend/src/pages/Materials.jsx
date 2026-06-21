@@ -17,10 +17,11 @@ export default function Materials() {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        api.get('/workshops')
+        const endpoint = user?.role === 'instructor' ? '/workshops/my' : '/workshops';
+        api.get(endpoint)
             .then(res => setWorkshops(res.data))
             .catch(err => toast.error("Failed to load workshops"));
-    }, []);
+    }, [user?.role]);
 
     const loadMaterials = async (workshopId = '') => {
         try {
