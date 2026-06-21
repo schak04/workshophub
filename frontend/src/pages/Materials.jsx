@@ -17,10 +17,22 @@ export default function Materials() {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        const endpoint = user?.role === 'instructor' ? '/workshops/my' : '/workshops';
-        api.get(endpoint)
-            .then(res => setWorkshops(res.data))
-            .catch(err => toast.error("Failed to load workshops"));
+        if (user?.role === 'instructor') {
+            api.get('/workshops/my')
+                .then(res => setWorkshops(res.data))
+                .catch(err => toast.error("Failed to load workshops"));
+        } else if (user?.role === 'participant') {
+            api.get('/registrations')
+                .then(res => {
+                    const activeRegs = res.data.filter(r => r.status === 'registered' && r.workshop);
+                    setWorkshops(activeRegs.map(r => r.workshop));
+                })
+                .catch(err => toast.error("Failed to load workshops"));
+        } else {
+            api.get('/workshops')
+                .then(res => setWorkshops(res.data))
+                .catch(err => toast.error("Failed to load workshops"));
+        }
     }, [user?.role]);
 
     const loadMaterials = async (workshopId = '') => {

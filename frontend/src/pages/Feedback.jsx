@@ -25,10 +25,19 @@ export default function Feedback() {
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        api.get('/workshops')
-            .then(res => setWorkshops(res.data))
-            .catch(err => toast.error("Failed to load workshops"));
-    }, []);
+        if (user?.role === 'participant') {
+            api.get('/registrations')
+                .then(res => {
+                    const activeRegs = res.data.filter(r => r.status === 'registered' && r.workshop);
+                    setWorkshops(activeRegs.map(r => r.workshop));
+                })
+                .catch(err => toast.error("Failed to load workshops"));
+        } else {
+            api.get('/workshops')
+                .then(res => setWorkshops(res.data))
+                .catch(err => toast.error("Failed to load workshops"));
+        }
+    }, [user?.role]);
 
     const loadFeedback = async (workshopId = '') => {
         try {
