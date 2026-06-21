@@ -15,13 +15,14 @@
 </p>
 <!-- markdownlint-enable MD033 -->
 
-This project is a full-stack web application designed to manage learning/educational workshops.  
-The system handles workshop creation, registrations, attendance tracking, feedback collection, and certificate generation while enforcing strict role-based access control.  
-It aims to streamline the entire workshop lifecycle for both organizers and participants.
+This project is a full-stack EdTech web application built with Node.js, Express.js, MongoDB, and React.js. It is designed to manage educational workshops.  
+The system handles workshop creation, registrations, attendance tracking, feedback collection, material distribution, and certificate generation while strictly enforcing role-based access control (RBAC).  
+It aims to streamline the entire workshop lifecycle for admins, instructors, and participants.
 
 > [!IMPORTANT]  
-> This is a personal learning and portfolio project developed independently by [me](#author).  
-> Feedback and discussions are welcome, however, this repository is not intended for external contributions.
+> **Project Status: Complete**  
+> WorkshopHub is a completed personal learning and portfolio project developed independently by [me](#author).  
+> While the core functionality has been fully implemented, the project might still receive occasional refinements and bug fixes in the future by [me](#author). Feedback and discussions are always welcome, but the repository is not intended for external contributions.
 
 ![dashboard_preview_dark](public/dashboard_preview_dark.png)
 
@@ -32,7 +33,7 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 </details>
 
 > [!NOTE]  
-> These screenshots display placeholder data (names of legendary programmers as instructors and workshop names related to their projects/expertise) used for testing during development.
+> These screenshots display placeholder data (names of legendary programmers as instructors and workshop names related to their projects/expertise) used to demonstrate the application's capabilities.
 
 ---
 
@@ -53,14 +54,15 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 
 ## Key Features
 
-- Role-based authentication and authorization
+- Role-Based Access Control (RBAC) and JWT authentication
 - Workshop creation and management
-- Secure workshop registration and unregistration
+- Seamless participant registration and cancellation
 - Attendance tracking with instructor-level restrictions
-- Feedback system with access control
-- Certificate generation for completed workshops
+- Workshop material distribution
+- Feedback and rating system
+- PDF certificate generation for participants
 - Clean and responsive user interface
-- RESTful API architecture
+- Robust RESTful API architecture
 
 ---
 
@@ -79,7 +81,7 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 
 ## Author
 
-Copyright (c) 2025-2026 [Saptaparno Chakraborty](https://github.com/schak04).  
+&copy; 2025-2026 [Saptaparno Chakraborty](https://github.com/schak04).  
 All rights reserved.
 
 ---
