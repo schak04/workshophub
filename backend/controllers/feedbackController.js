@@ -1,5 +1,7 @@
 const Feedback = require('../models/Feedback');
 const Workshop = require('../models/Workshop');
+const Registration = require('../models/Registration');
+const Attendance = require('../models/Attendance');
 const mongoose = require('mongoose');
 
 const addFeedback = async (req, res) => {
@@ -7,7 +9,24 @@ const addFeedback = async (req, res) => {
         const {workshop, rating, comment} = req.body;
         if (!workshop || !rating) return res.status(400).json({message: "Workshop and rating are both required"});
 
-        const f = await Feedback.create({workshop, user: req.user._id, rating, comment});
+        const parsedRating = parseInt(rating, 10);
+        if (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+            return res.status(400).json({message: "Rating must be an integer between 1 and 5"});
+        }
+
+        const w = await Workshop.exists({_id: workshop});
+        if (!w) return res.status(404).json({message: "Workshop not found"});
+
+        const existing = await Feedback.findOne({workshop, user: req.user._id});
+        if (existing) return res.status(400).json({message: "You have already submitted feedback for this workshop"});
+
+        const reg = await Registration.findOne({workshop, user: req.user._id, status: 'registered'});
+        if (!reg) return res.status(403).json({message: "Forbidden: You are not registered for this workshop"});
+
+        const attendance = await Attendance.findOne({registration: reg._id, attended: true});
+        if (!attendance) return res.status(403).json({message: "Forbidden: You cannot review a workshop you did not attend"});
+
+        const f = await Feedback.create({workshop, user: req.user._id, rating: parsedRating, comment});
         res.status(201).json(f);
     }
     catch (err) {
