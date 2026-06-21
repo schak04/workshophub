@@ -1,6 +1,7 @@
 const Certificate = require('../models/Certificate');
 const User = require('../models/User');
 const Registration = require('../models/Registration');
+const Workshop = require('../models/Workshop');
 const PDFDocument = require('pdfkit');
 
 const issueCertificate = async (req, res) => {
@@ -29,6 +30,19 @@ const listCertificates = async (req, res) => {
         const filter = {};
         if (req.user.role === 'participant') {
             filter.user = req.user._id;
+        } else if (req.user.role === 'instructor') {
+            const myWorkshops = await Workshop.find({instructor: req.user._id}).select('_id');
+            const myWorkshopIds = myWorkshops.map(w => w._id.toString());
+            
+            if (req.query.workshop) {
+                if (!myWorkshopIds.includes(req.query.workshop)) {
+                    return res.json([]);
+                }
+                filter.workshop = req.query.workshop;
+            } else {
+                filter.workshop = { $in: myWorkshopIds };
+            }
+            if (req.query.user) filter.user = req.query.user;
         } else {
             if (req.query.user) filter.user = req.query.user;
             if (req.query.workshop) filter.workshop = req.query.workshop;
@@ -57,6 +71,10 @@ const downloadCertificate = async (req, res) => {
 
         if (req.user.role === 'participant' && cert.user._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ message: "Forbidden: You CANNOT download someone else's certificate" });
+        }
+        
+        if (req.user.role === 'instructor' && cert.workshop.instructor._id.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "Forbidden: You CANNOT download certificates for other instructors' workshops" });
         }
 
         /*
