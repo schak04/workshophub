@@ -22,7 +22,7 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 ![dashboard_preview_dark](public/dashboard_preview_dark.png)
 
 <details>
-<summary>Toggle light-theme admin dashboard preview</summary>
+<summary><b>Toggle light-theme admin dashboard preview</b></summary>
 
 ![dashboard_preview_light](public/dashboard_preview_light.png)
 </details>
