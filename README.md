@@ -19,6 +19,16 @@ This project is a full-stack web application designed to manage learning/educati
 The system handles workshop creation, registrations, attendance tracking, feedback collection, and certificate generation while enforcing strict role-based access control.  
 It aims to streamline the entire workshop lifecycle for both organizers and participants.
 
+![dashboard_preview_light](public/dashboard_preview_light.png)
+<details>
+<summary>Toggle dark theme dashboard preview</summary>
+
+![dashboard_preview_dark](public/dashboard_preview_dark.png)
+</details>
+
+> [!NOTE]  
+> These screenshots display placeholder data (names of legendary programmers as instructors and workshop names related to their projects/expertise) used for testing during development.
+
 ---
 
 ## Tech Stack
@@ -28,8 +38,10 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 - **ODM:** Mongoose  
 - **Authentication:** JWT-based authentication  
 - **Password Hashing:** Bcrypt (for secure password storage)  
-- **Testing Tools:** Postman  
+- **Testing/Debugging Tools:** Postman, Browser DevTools 
 - **Frontend:** React, Tailwind CSS, Vite
+- **Certificate PDF Generation:** `pdfkit`
+- **Toast Notifications:** `react-hot-toast`
 - **Icons:** `lucide-react`
 
 ---
@@ -57,31 +69,6 @@ It aims to streamline the entire workshop lifecycle for both organizers and part
 
 ### Entity Relationship (ER) Diagram
 ![ER Diagram](docs/diagrams/er-diagram.png)
-
----
-
-## User Roles & Permissions (current; may be updated in future versions)
-
-### Admin
-
-- Create, update, delete, and view workshops
-- Assign instructors to workshops (during workshop creation)
-- Manage attendance across all workshops
-- View feedback submitted for all workshops
-
-### Instructor
-
-- View workshops
-- Manage attendance only for their own workshops
-- View feedback only for their own workshops
-
-### Participant
-
-- View workshops
-- Register for workshops
-- View their registrations
-- Unregister from workshops
-- Submit feedback for workshops
 
 ---
 
