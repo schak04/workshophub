@@ -11,14 +11,7 @@ export default function EditWorkshop() {
     const navigate = useNavigate();
     const [form, setForm] = useState(null);
     const [instructors, setInstructors] = useState([]);
-
-    if (user?.role !== 'admin') {
-        return (
-            <div className='rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300'>
-                Access denied
-            </div>
-        );
-    }
+    const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
         api.get(`/workshops/${id}`)
@@ -42,9 +35,15 @@ export default function EditWorkshop() {
             .catch(err => toast.error("Failed to load instructors"));
     }, []);
 
-    if (!form) return null;
+    if (user?.role !== 'admin') {
+        return (
+            <div className='rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300'>
+                Access denied
+            </div>
+        );
+    }
 
-    const [errorMsg, setErrorMsg] = useState('');
+    if (!form) return null;
 
     const handleChange = e =>
         setForm({ ...form, [e.target.name]: e.target.value });
