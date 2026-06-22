@@ -33,7 +33,7 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 </details>
 
 > [!NOTE]  
-> These screenshots display placeholder data (names of legendary programmers as instructors and workshop names related to their projects/expertise) used to demonstrate the application's capabilities.
+> These screenshots display placeholder data (names of legendary programmers as instructors and workshop names related to their projects/expertise) used for testing during development.
 
 ---
 
