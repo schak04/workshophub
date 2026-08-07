@@ -1,0 +1,25 @@
+services:
+  db:
+    image: mongo:7.0
+    container_name: workshophub-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: workshophub-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=mongodb://db:27017/workshop_db
+      - JWT_SECRET=testsecret
+      - PORT=8000
+    depends_on:
+      - db
+
+volumes:
+  mongo_data:
