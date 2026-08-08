@@ -12,6 +12,7 @@
   <img alt="React.js" src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
   <img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white"/>
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
 </p>
 <!-- markdownlint-enable MD033 -->
 
@@ -44,11 +45,68 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 - **ODM:** Mongoose  
 - **Authentication:** JWT-based authentication  
 - **Password Hashing:** Bcrypt (for secure password storage)  
+- **Containerisation:** Docker, Docker Compose
 - **Testing/Debugging Tools:** Postman, Browser DevTools 
 - **Frontend:** React, Tailwind CSS, Vite
+- **Web Server:** Nginx (production distribution)
 - **Certificate PDF Generation:** `pdfkit`
 - **Toast Notifications:** `react-hot-toast`
 - **Icons:** `lucide-react`
+
+---
+
+## Docker Setup & Architecture
+
+I containerised the entire application using Docker and Docker Compose to make local environment setup reproducible and to avoid configuration differences across systems.
+
+```mermaid
+graph TD
+    subgraph Host Machine / Docker Network
+        db[Database: MongoDB 7.0]
+        backend[Backend: Express.js API]
+        frontend[Frontend Web Server: Nginx]
+    end
+
+    user((Browser)) -->|Access App Port 3000| frontend
+    user -->|Access API Port 8000| backend
+    backend -->|Persists Data| db
+```
+
+* **Multi-Stage Build:** Configured a multi-stage Dockerfile for the frontend to compile React with Node.js and serve the static files using Nginx. This keeps the production image extremely small (under 30MB).
+* **Network Isolation:** The database, backend, and frontend run in their own containers within a private bridge network.
+* **Data Persistence:** Used a named volume (`mongo_data`) so that data persists even when the containers are stopped or rebuilt.
+
+---
+
+## Local Development (Docker Setup)
+
+Make sure you have Docker and Docker Compose installed on your system.
+
+### 1. Start the Application
+Spin up all services in the background:
+```bash
+docker compose up --build -d
+```
+* **Frontend:** `http://localhost:3000`
+* **Backend API:** `http://localhost:8000/api`
+
+### 2. Seed the Database (For Testing)
+Populate the database with sample data (legendary instructors and test workshops) by running the seeder inside the backend container:
+```bash
+docker compose exec backend node scripts/seed.js
+```
+
+### 3. Log In or Register
+* **Test Account:** Log in using the pre-seeded test credentials:
+  * **Email:** `[EMAIL_ADDRESS]`
+  * **Password:** `password123`
+* **Regular Users:** You can register a new account directly from the registration page in the browser to experience the participant registration, attendance tracking, and certificate workflows from scratch.
+
+### 4. Stop the Containers
+Shut down and clean up running containers:
+```bash
+docker compose down
+```
 
 ---
 
