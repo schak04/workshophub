@@ -48,7 +48,7 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 - **Containerisation:** Docker, Docker Compose
 - **Testing/Debugging Tools:** Postman, Browser DevTools 
 - **Frontend:** React, Tailwind CSS, Vite
-- **Web Server:** Nginx (production distribution)
+- **Web Server:** Nginx (serving the optimised frontend build)
 - **Certificate PDF Generation:** `pdfkit`
 - **Toast Notifications:** `react-hot-toast`
 - **Icons:** `lucide-react`
@@ -57,7 +57,7 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 
 ## Docker Setup & Architecture
 
-I containerised the entire application using Docker and Docker Compose to make local environment setup reproducible and to avoid configuration differences across systems.
+I containerised the entire application using Docker and Docker Compose to make local execution reproducible and to avoid configuration differences across systems.
 
 ```mermaid
 graph TD
@@ -78,7 +78,7 @@ graph TD
 
 ---
 
-## Local Development (Docker Setup)
+## Running the Application Locally (Docker)
 
 Make sure you have Docker and Docker Compose installed on your system.
 
@@ -90,8 +90,8 @@ docker compose up --build -d
 * **Frontend:** `http://localhost:3000`
 * **Backend API:** `http://localhost:8000/api`
 
-### 2. Seed the Database (For Testing)
-Populate the database with sample data (legendary instructors and test workshops) by running the seeder inside the backend container:
+### 2. Seed the Database (Optional; For a Quick Demo / Exploring the App)
+Populate the database with sample data by running the seeder inside the backend container:
 ```bash
 docker compose exec backend node scripts/seed.js
 ```
@@ -100,7 +100,7 @@ docker compose exec backend node scripts/seed.js
 * **Test Account:** Log in using the pre-seeded test credentials:
   * **Email:** `[EMAIL_ADDRESS]`
   * **Password:** `password123`
-* **Regular Users:** You can register a new account directly from the registration page in the browser to experience the participant registration, attendance tracking, and certificate workflows from scratch.
+* **New Users:** You can register a new account directly from the registration page in the browser to experience the participant registration, attendance tracking, and certificate workflows from scratch.
 
 ### 4. Stop the Containers
 Shut down and clean up running containers:
