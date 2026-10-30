@@ -1,23 +1,23 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
-    html {
-        @apply bg-slate-50 text-slate-900;
-    }
+  html {
+    @apply bg-slate-50 text-slate-900;
+  }
 
-    html.dark {
-        @apply bg-slate-950 text-slate-100;
-    }
+  html.dark {
+    @apply bg-slate-950 text-slate-100;
+  }
 
-    body {
-        @apply min-h-screen;
-    }
+  body {
+    @apply min-h-screen;
+  }
 
-    button {
-        @apply cursor-pointer;
-    }
+  button {
+    @apply cursor-pointer;
+  }
 }
 
 /* @layer components {

@@ -16,8 +16,8 @@
 </p>
 <!-- markdownlint-enable MD033 -->
 
-This project is a full-stack EdTech web application built with Node.js, Express.js, MongoDB, and React.js. It is designed to manage educational workshops.  
-The system handles workshop creation, registrations, attendance tracking, feedback collection, material distribution, and certificate generation while strictly enforcing role-based access control (RBAC).  
+This project is a full-stack application built with Node.js, Express.js, MongoDB, and React.js for managing the full lifecycle of educational workshops.  
+The application handles workshop creation, registrations, attendance tracking, feedback collection, material distribution, and certificate generation while strictly enforcing role-based access control (RBAC).  
 It aims to streamline the entire workshop lifecycle for admins, instructors, and participants.
 
 > [!IMPORTANT]  
@@ -31,6 +31,7 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 <summary><b>Toggle light-theme admin dashboard preview</b></summary>
 
 ![dashboard_preview_light](public/dashboard_preview_light.png)
+
 </details>
 
 > [!NOTE]  
@@ -40,13 +41,13 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 
 ## Tech Stack
 
-- **Backend:** Node.js, Express.js  
+- **Backend:** Node.js, Express.js
 - **Database:** MongoDB
-- **ODM:** Mongoose  
-- **Authentication:** JWT-based authentication  
-- **Password Hashing:** Bcrypt (for secure password storage)  
+- **ODM:** Mongoose
+- **Authentication:** JWT-based authentication
+- **Password Hashing:** Bcrypt (for secure password storage)
 - **Containerisation:** Docker, Docker Compose
-- **Testing/Debugging Tools:** Postman, Browser DevTools 
+- **Testing/Debugging Tools:** Postman, Browser DevTools
 - **Frontend:** React, Tailwind CSS, Vite
 - **Web Server:** Nginx (serving the optimised frontend build)
 - **Certificate PDF Generation:** `pdfkit`
@@ -72,9 +73,9 @@ graph TD
     backend -->|Persists Data| db
 ```
 
-* **Multi-Stage Build:** Configured a multi-stage Dockerfile for the frontend to compile React with Node.js and serve the static files using Nginx. This keeps the production image extremely small (under 30MB).
-* **Network Isolation:** The database, backend, and frontend run in their own containers within a private bridge network.
-* **Data Persistence:** Used a named volume (`mongo_data`) so that data persists even when the containers are stopped or rebuilt.
+- **Multi-Stage Build:** Configured a multi-stage Dockerfile for the frontend to compile React with Node.js and serve the static files using Nginx. This keeps the production image extremely small (under 30MB).
+- **Network Isolation:** The database, backend, and frontend run in their own containers within a private bridge network.
+- **Data Persistence:** Used a named volume (`mongo_data`) so that data persists even when the containers are stopped or rebuilt.
 
 ---
 
@@ -83,27 +84,35 @@ graph TD
 Make sure you have Docker and Docker Compose installed on your system.
 
 ### 1. Start the Application
+
 Spin up all services in the background:
+
 ```bash
 docker compose up --build -d
 ```
-* **Frontend:** `http://localhost:3000`
-* **Backend API:** `http://localhost:8000/api`
+
+- **Frontend:** `http://localhost:3000`
+- **Backend API:** `http://localhost:8000/api`
 
 ### 2. Seed the Database (Optional; For a Quick Demo / Exploring the App)
+
 Populate the database with sample data by running the seeder inside the backend container:
+
 ```bash
 docker compose exec backend node scripts/seed.js
 ```
 
 ### 3. Log In or Register
-* **Test Account:** Log in using the pre-seeded test credentials:
-  * **Email:** `[EMAIL_ADDRESS]`
-  * **Password:** `password123`
-* **New Users:** You can register a new account directly from the registration page in the browser to experience the participant registration, attendance tracking, and certificate workflows from scratch.
+
+- **Test Account:** Log in using the pre-seeded test credentials:
+  - **Email:** `[EMAIL_ADDRESS]`
+  - **Password:** `password123`
+- **New Users:** You can register a new account directly from the registration page in the browser to experience the participant registration, attendance tracking, and certificate workflows from scratch.
 
 ### 4. Stop the Containers
+
 Shut down and clean up running containers:
+
 ```bash
 docker compose down
 ```
@@ -127,12 +136,15 @@ docker compose down
 ## System Design
 
 ### System Architecture
+
 ![System Architecture Diagram](docs/diagrams/system-architecture-diagram.png)
 
 ### UML Use Case Diagram
+
 ![UML Use Case Diagram](docs/diagrams/use-case-diagram.png)
 
 ### Entity Relationship (ER) Diagram
+
 ![ER Diagram](docs/diagrams/er-diagram.png)
 
 ---
