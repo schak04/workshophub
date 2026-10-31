@@ -102,4 +102,42 @@ const logout = async (req, res) => {
   });
 };
 
-module.exports = { signup, login, logout };
+const demoLogin = async (req, res) => {
+  try {
+    const { role } = req.body;
+    const allowedRoles = ["admin", "instructor", "participant"];
+    const targetRole = allowedRoles.includes(role) ? role : "participant";
+
+    const user = await User.findOne({ role: targetRole }).sort({
+      createdAt: 1,
+    });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: `No demo account available for role: ${targetRole}` });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, isDemo: true },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" },
+    );
+
+    res.json({
+      message: `Logged in as demo ${targetRole}`,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isDemo: true,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { signup, login, logout, demoLogin };

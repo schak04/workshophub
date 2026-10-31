@@ -14,6 +14,14 @@ const verifyToken = async (req, res, next) => {
     const user = await User.findById(payload.id).select("-password");
     if (!user) return res.status(401).json({ message: "INVALID token!!" });
     req.user = user;
+    req.isDemo = Boolean(payload.isDemo);
+
+    if (req.isDemo && ["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+      return res.status(403).json({
+        message: "Action disabled in demo mode to protect sample data.",
+      });
+    }
+
     next();
   } catch (err) {
     console.error(err);
