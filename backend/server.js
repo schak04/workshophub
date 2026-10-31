@@ -10,7 +10,17 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+const clientUrl = process.env.CLIENT_URL;
+const allowedOrigins = clientUrl
+  ? clientUrl.split(",").map((origin) => origin.trim())
+  : "*";
+
+app.use(
+  cors({
+    origin: allowedOrigins === "*" ? true : allowedOrigins,
+    credentials: true,
+  }),
+);
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -21,6 +31,9 @@ const attendanceRoutes = require("./routes/attendanceRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
 app.get("/", (req, res) => res.send({ message: "WorkshopHub" }));
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/workshops", workshopRoutes);

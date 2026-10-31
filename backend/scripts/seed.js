@@ -40,10 +40,15 @@ const seed = async () => {
     const defaultPassword = "password123";
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@workshophub.com";
+    const adminName = process.env.ADMIN_NAME || "WorkshopHub Administrator";
+    const adminPassword = process.env.ADMIN_PASSWORD || defaultPassword;
+    const adminHashedPassword = await bcrypt.hash(adminPassword, 10);
+
     const adminUser = await User.create({
-      name: "Saptaparno Chakraborty",
-      email: "sapto@workshophub.com",
-      password: hashedPassword,
+      name: adminName,
+      email: adminEmail,
+      password: adminHashedPassword,
       role: "admin",
     });
 
