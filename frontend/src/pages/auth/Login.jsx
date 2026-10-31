@@ -4,10 +4,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { LogIn } from "lucide-react";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, loginDemo } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   const submit = async (e) => {
@@ -24,6 +25,22 @@ export default function Login() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async (role) => {
+    setErrorMsg("");
+    setDemoLoading(role);
+    try {
+      await loginDemo(role);
+      navigate("/");
+    } catch (error) {
+      setErrorMsg(
+        error.response?.data?.message ||
+          "Unable to sign in as demo user. Please try again.",
+      );
+    } finally {
+      setDemoLoading("");
     }
   };
 
@@ -83,11 +100,60 @@ export default function Login() {
           <button
             type="submit"
             className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 transition-colors"
-            disabled={loading}
+            disabled={loading || Boolean(demoLoading)}
           >
             {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+              Or explore demo mode
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("admin")}
+            disabled={loading || Boolean(demoLoading)}
+            className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+          >
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {demoLoading === "admin" ? "..." : "Admin"}
+            </span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">Manage</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("instructor")}
+            disabled={loading || Boolean(demoLoading)}
+            className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+          >
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {demoLoading === "instructor" ? "..." : "Instructor"}
+            </span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">Teach</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleDemoLogin("participant")}
+            disabled={loading || Boolean(demoLoading)}
+            className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-2 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+          >
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {demoLoading === "participant" ? "..." : "Participant"}
+            </span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">Attend</span>
+          </button>
+        </div>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-slate-600 dark:text-slate-400">

@@ -104,9 +104,16 @@ export default function Navbar() {
                 <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                   {user?.name}
                 </p>
-                <p className="truncate text-xs text-slate-500 dark:text-slate-400">
-                  {user?.role}
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className="truncate text-xs text-slate-500 dark:text-slate-400 capitalize">
+                    {user?.role}
+                  </p>
+                  {user?.isDemo && (
+                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                      Demo
+                    </span>
+                  )}
+                </div>
               </div>
 
               <button
@@ -121,9 +128,16 @@ export default function Navbar() {
       </aside>
 
       <header className="flex w-full items-center justify-between border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-950 md:ml-64 sm:px-6 lg:px-8">
-        <h2 className="text-sm font-medium text-slate-600 dark:text-slate-300">
-          {pageTitle}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            {pageTitle}
+          </h2>
+          {user?.isDemo && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+              Demo Mode (Read-only)
+            </span>
+          )}
+        </div>
 
         <button
           onClick={() => setDarkMode((v) => !v)}
