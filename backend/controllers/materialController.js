@@ -6,22 +6,18 @@ const addMaterial = async (req, res) => {
   try {
     const { workshop, title, file_url } = req.body;
     if (!workshop || !file_url)
-      return res
-        .status(400)
-        .json({
-          message: "Workshop and file URL are required for adding material",
-        });
+      return res.status(400).json({
+        message: "Workshop and file URL are required for adding material",
+      });
 
     if (req.user.role === "instructor") {
       const w = await Workshop.findById(workshop);
       if (!w) return res.status(404).json({ message: "Workshop not found" });
       if (w.instructor.toString() !== req.user._id.toString()) {
-        return res
-          .status(403)
-          .json({
-            message:
-              "Forbidden: You can only upload materials to your own workshops",
-          });
+        return res.status(403).json({
+          message:
+            "Forbidden: You can only upload materials to your own workshops",
+        });
       }
     }
 
@@ -85,4 +81,3 @@ const listMaterials = async (req, res) => {
 };
 
 module.exports = { addMaterial, listMaterials };
-

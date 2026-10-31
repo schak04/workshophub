@@ -36,11 +36,9 @@ const createWorkshop = async (req, res) => {
       data.endDate,
     );
     if (overlapping) {
-      return res
-        .status(400)
-        .json({
-          message: `Instructor is already assigned to another workshop (${overlapping.title}) during these dates.`,
-        });
+      return res.status(400).json({
+        message: `Instructor is already assigned to another workshop (${overlapping.title}) during these dates.`,
+      });
     }
     const workshop = await Workshop.create(data);
     res.status(201).json(workshop);
@@ -65,11 +63,9 @@ const updateWorkshop = async (req, res) => {
       req.params.id,
     );
     if (overlapping) {
-      return res
-        .status(400)
-        .json({
-          message: `Instructor is already assigned to another workshop (${overlapping.title}) during these dates.`,
-        });
+      return res.status(400).json({
+        message: `Instructor is already assigned to another workshop (${overlapping.title}) during these dates.`,
+      });
     }
 
     const updated = await Workshop.findByIdAndUpdate(req.params.id, data, {
@@ -156,4 +152,3 @@ module.exports = {
   getMyWorkshops,
   getWorkshops,
 };
-

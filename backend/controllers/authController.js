@@ -46,18 +46,16 @@ const signup = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN || "7d",
     });
 
-    res
-      .status(201)
-      .json({
-        message: "User created successfully",
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
-        token,
-      });
+    res.status(201).json({
+      message: "User created successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      token,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -105,4 +103,3 @@ const logout = async (req, res) => {
 };
 
 module.exports = { signup, login, logout };
-

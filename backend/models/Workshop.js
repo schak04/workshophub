@@ -15,4 +15,3 @@ const WorkshopSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Workshop", WorkshopSchema);
-

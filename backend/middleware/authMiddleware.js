@@ -34,4 +34,3 @@ const requireRole = (roles = []) => {
 };
 
 module.exports = { verifyToken, requireRole };
-

@@ -6,11 +6,9 @@ const markAttendance = async (req, res) => {
   try {
     const { registrationId, date, attended } = req.body;
     if (!registrationId || !date)
-      res
-        .status(400)
-        .json({
-          message: "Can't mark attendance without registration ID and date",
-        });
+      res.status(400).json({
+        message: "Can't mark attendance without registration ID and date",
+      });
 
     const reg =
       await Registration.findById(registrationId).populate("workshop");
@@ -20,11 +18,9 @@ const markAttendance = async (req, res) => {
         .json({ message: "Error 404: Registration not found" });
     if (req.user.role === "instructor") {
       if (reg.workshop.instructor.toString() !== req.user.id) {
-        return res
-          .status(403)
-          .json({
-            message: "You are not allowed to mark attendance for this workshop",
-          });
+        return res.status(403).json({
+          message: "You are not allowed to mark attendance for this workshop",
+        });
       }
     }
 
@@ -61,11 +57,9 @@ const getAttendanceByWorkshop = async (req, res) => {
       return res.status(404).json({ message: "Workshop not found" });
     if (req.user.role === "instructor") {
       if (workshop.instructor.toString() !== req.user.id) {
-        return res
-          .status(403)
-          .json({
-            message: "You are not allowed to view attendance for this workshop",
-          });
+        return res.status(403).json({
+          message: "You are not allowed to view attendance for this workshop",
+        });
       }
     }
     const { date } = req.query;
@@ -128,4 +122,3 @@ const getMyAttendance = async (req, res) => {
 };
 
 module.exports = { markAttendance, getAttendanceByWorkshop, getMyAttendance };
-

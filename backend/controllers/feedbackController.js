@@ -24,11 +24,9 @@ const addFeedback = async (req, res) => {
 
     const existing = await Feedback.findOne({ workshop, user: req.user._id });
     if (existing)
-      return res
-        .status(400)
-        .json({
-          message: "You have already submitted feedback for this workshop",
-        });
+      return res.status(400).json({
+        message: "You have already submitted feedback for this workshop",
+      });
 
     const reg = await Registration.findOne({
       workshop,
@@ -36,22 +34,18 @@ const addFeedback = async (req, res) => {
       status: "registered",
     });
     if (!reg)
-      return res
-        .status(403)
-        .json({
-          message: "Forbidden: You are not registered for this workshop",
-        });
+      return res.status(403).json({
+        message: "Forbidden: You are not registered for this workshop",
+      });
 
     const attendance = await Attendance.findOne({
       registration: reg._id,
       attended: true,
     });
     if (!attendance)
-      return res
-        .status(403)
-        .json({
-          message: "Forbidden: You cannot review a workshop you did not attend",
-        });
+      return res.status(403).json({
+        message: "Forbidden: You cannot review a workshop you did not attend",
+      });
 
     const f = await Feedback.create({
       workshop,
@@ -94,4 +88,3 @@ const listFeedback = async (req, res) => {
 };
 
 module.exports = { addFeedback, listFeedback };
-

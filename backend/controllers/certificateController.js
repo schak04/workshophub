@@ -91,23 +91,19 @@ const downloadCertificate = async (req, res) => {
       req.user.role === "participant" &&
       cert.user._id.toString() !== req.user._id.toString()
     ) {
-      return res
-        .status(403)
-        .json({
-          message: "Forbidden: You CANNOT download someone else's certificate",
-        });
+      return res.status(403).json({
+        message: "Forbidden: You CANNOT download someone else's certificate",
+      });
     }
 
     if (
       req.user.role === "instructor" &&
       cert.workshop.instructor._id.toString() !== req.user._id.toString()
     ) {
-      return res
-        .status(403)
-        .json({
-          message:
-            "Forbidden: You CANNOT download certificates for other instructors' workshops",
-        });
+      return res.status(403).json({
+        message:
+          "Forbidden: You CANNOT download certificates for other instructors' workshops",
+      });
     }
 
     /*
@@ -225,4 +221,3 @@ const downloadCertificate = async (req, res) => {
 };
 
 module.exports = { issueCertificate, listCertificates, downloadCertificate };
-
