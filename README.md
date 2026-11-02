@@ -25,6 +25,17 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 > WorkshopHub is a completed personal learning and portfolio project developed independently by [me](#author).  
 > While the core features have been fully implemented, the project might still receive occasional refinements and bug fixes in the future by [me](#author). Feedback and discussions are always welcome, but the repository is not intended for external contributions.
 
+---
+
+## Live Deployment
+
+WorkshopHub is hosted on: https://workshophub-taupe.vercel.app
+
+> [!NOTE]  
+> Because the backend is hosted on Render's free tier, the web service automatically spins down after periods of inactivity. If the service is idle, the initial request may take 30 to 50 seconds to wake up. Subsequent requests will respond normally.
+
+---
+
 ![dashboard_preview_dark](public/dashboard_preview_dark.png)
 
 <details>
@@ -42,30 +53,45 @@ It aims to streamline the entire workshop lifecycle for admins, instructors, and
 ## Tech Stack
 
 - **Backend:** Node.js, Express.js
-- **Database:** MongoDB
+- **Database:** MongoDB (MongoDB Atlas in production)
 - **ODM:** Mongoose
 - **Authentication:** JWT-based authentication
 - **Password Hashing:** Bcrypt (for secure password storage)
+- **Cloud Hosting:** Vercel (Frontend), Render (Backend), MongoDB Atlas (Database)
 - **Containerisation:** Docker, Docker Compose
 - **Testing/Debugging Tools:** Postman, Browser DevTools
 - **Frontend:** React, Tailwind CSS, Vite
-- **Web Server:** Nginx (serving the optimised frontend build)
+- **Web Server:** Nginx (serving the optimised frontend build in Docker)
 - **Certificate PDF Generation:** `pdfkit`
 - **Toast Notifications:** `react-hot-toast`
 - **Icons:** `lucide-react`
 
 ---
 
-## Docker Setup & Architecture
+## Architecture & Infrastructure
+
+### Cloud Deployment Architecture
+
+In production, the application is decoupled into independently hosted frontend, backend, and managed database layers:
+
+```mermaid
+graph TD
+    user((Browser)) -->|HTTPS Requests| frontend["Frontend: Vercel CDN"]
+    user -->|API Requests & Auth| backend["Backend: Render Web Service"]
+    frontend -->|Client-side Routing & Assets| user
+    backend -->|TLS Connection over SRV| db[("Database: MongoDB Atlas")]
+```
+
+### Local Docker Architecture
 
 I containerised the entire application using Docker and Docker Compose to make local execution reproducible and to avoid configuration differences across systems.
 
 ```mermaid
 graph TD
     subgraph Host Machine / Docker Network
-        db[Database: MongoDB 7.0]
-        backend[Backend: Express.js API]
-        frontend[Frontend Web Server: Nginx]
+        db["Database: MongoDB 7.0"]
+        backend["Backend: Express.js API"]
+        frontend["Frontend Web Server: Nginx"]
     end
 
     user((Browser)) -->|Access App Port 3000| frontend
@@ -79,13 +105,13 @@ graph TD
 
 ---
 
-## Running the Application Locally (Docker)
+## Running Locally (Docker)
 
-Make sure you have Docker and Docker Compose installed on your system.
+This project is a personal solo build and is not open to external contributions. For testing, demonstration, or reviewing the application locally outside the live cloud deployment, I use Docker Compose. It provides a reproducible multi-container environment with zero manual configuration.
 
-### 1. Start the Application
+### 1. Start Services
 
-Spin up all services in the background:
+Spin up all containers in the background:
 
 ```bash
 docker compose up --build -d
@@ -94,22 +120,15 @@ docker compose up --build -d
 - **Frontend:** `http://localhost:3000`
 - **Backend API:** `http://localhost:8000/api`
 
-### 2. Seed the Database (Optional; For a Quick Demo / Exploring the App)
+### 2. Seed Sample Data (Optional)
 
-Populate the database with sample data by running the seeder inside the backend container:
+Populate the local database with sample data inside the backend container:
 
 ```bash
 docker compose exec backend node scripts/seed.js
 ```
 
-### 3. Log In or Register
-
-- **Test Account:** Log in using the pre-seeded test credentials:
-  - **Email:** `[EMAIL_ADDRESS]`
-  - **Password:** `password123`
-- **New Users:** You can register a new account directly from the registration page in the browser to experience the participant registration, attendance tracking, and certificate workflows from scratch.
-
-### 4. Stop the Containers
+### 3. Stop Containers
 
 Shut down and clean up running containers:
 
@@ -119,31 +138,39 @@ docker compose down
 
 ---
 
-## Key Features
+### Exploring the Application (Demo Mode)
 
-- Role-Based Access Control (RBAC) and JWT authentication
-- Workshop creation and management
-- Seamless participant registration and cancellation
-- Attendance tracking with instructor-level restrictions
-- Workshop material distribution
-- Feedback and rating system
-- PDF certificate generation for participants
-- Clean and responsive user interface
-- Robust RESTful API architecture
+For reviewing role-specific interfaces locally or on the live deployment:
+
+- **One-Click Demo Mode:** On the login page (`/login`), click any quick role button (**Admin**, **Instructor**, or **Participant**) to sign in immediately without typing credentials. When operating in demo mode, mutating requests (POST, PUT, PATCH, DELETE) are rejected by middleware to safeguard sample records.
+- **New User Registration:** You can register a brand new account directly from the signup page in your browser to experience participant enrollment, attendance tracking, and certificate generation from scratch.
 
 ---
 
-## System Design
+## Key Features
 
-### System Architecture
+- **Authentication & RBAC:** Secure JWT-based authentication with bcrypt password hashing and strict role-based access control for Admins, Instructors, and Participants.
+- **Showcase Demo Mode:** Built-in one-click sign-in buttons for all three roles, with route-level mutation guards to safeguard sample records from accidental alteration.
+- **Workshop Management:** Comprehensive workshop lifecycle handling including creation, editing, scheduling, capacity caps, and status tracking.
+- **Participant Registration:** Real-time workshop enrolment and cancellation workflows with seat availability checks.
+- **Attendance Tracking:** Session attendance management restricted to assigned workshop instructors and platform administrators.
+- **Learning Materials:** Material distribution supporting external study links and workshop resources.
+- **Feedback & Ratings:** Participant feedback collection with numerical ratings and qualitative reviews.
+- **Certificate Generation:** Dynamic, downloadable PDF certificates generated on the fly with `pdfkit` for eligible attendees.
+- **Modern Responsive Interface:** Clean user interface styled with Tailwind CSS, supporting both dark and light visual themes.
+- **Robust RESTful API Architecture:** Modular controllers, route separation, centralized error handling, and health monitoring.
+
+---
+
+## System Architecture
 
 ![System Architecture Diagram](docs/diagrams/system-architecture-diagram.png)
 
-### UML Use Case Diagram
+## UML Use Case Diagram
 
 ![UML Use Case Diagram](docs/diagrams/use-case-diagram.png)
 
-### Entity Relationship (ER) Diagram
+## Entity Relationship (ER) Diagram
 
 ![ER Diagram](docs/diagrams/er-diagram.png)
 
